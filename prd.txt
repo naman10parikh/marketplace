@@ -1,4 +1,4 @@
- # Product Requirements Document: MCP Server Marketplace
+# Product Requirements Document: MCP Server Marketplace
 
 ## 1. Problem/Opportunity
 The MCP (Model-Client-Protocol) server ecosystem is currently fragmented with limited discoverability, validation, and installation options. Users face challenges finding quality servers, while creators lack standardized distribution channels and monetization options. The awesome-mcp-servers GitHub repository (https://github.com/punkpeye/awesome-mcp-servers) serves as the most comprehensive collection but lacks user-friendly discovery, quality validation, and seamless installation across multiple IDEs.
