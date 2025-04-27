@@ -14,7 +14,7 @@
           "id": 1,
           "title": "Initialize Node.js/Express project with TypeScript",
           "description": "Set up the base Node.js project with Express framework and TypeScript configuration",
-          "status": "pending",
+          "status": "done",
           "dependencies": [],
           "details": "Create a new directory for the project. Initialize npm with 'npm init'. Install core dependencies: express, typescript, ts-node, @types/node, @types/express. Create tsconfig.json with appropriate compiler options (target: es6, module: commonjs, outDir: dist, rootDir: src, strict: true). Create a basic server.ts file with Express initialization. Set up npm scripts for development and building (start, build, dev)."
         },

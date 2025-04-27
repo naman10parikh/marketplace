@@ -11,7 +11,7 @@ Create a Node.js/Express project with TypeScript. Set up the directory structure
 Verify project structure and configuration. Run linting and basic tests to ensure the setup is working correctly. Test the CI/CD pipeline with a simple build.
 
 # Subtasks:
-## 1. Initialize Node.js/Express project with TypeScript [pending]
+## 1. Initialize Node.js/Express project with TypeScript [done]
 ### Dependencies: None
 ### Description: Set up the base Node.js project with Express framework and TypeScript configuration
 ### Details:
