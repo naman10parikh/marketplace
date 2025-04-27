@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
+import { Server } from 'http';
 
 // Initialize Express app
 const app = express();
@@ -19,6 +20,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  // eslint-disable-next-line no-console
   console.error(err.stack);
   res.status(500).json({
     error: {
@@ -30,9 +32,29 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 // Define port
 const PORT = process.env.PORT || 3000;
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Server instance
+let server: Server | null = null;
 
-export default app; 
+// Start server function
+export const startServer = (): Server => {
+  server = app.listen(PORT, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Server running on port ${PORT}`);
+  });
+  return server;
+};
+
+// Stop server function
+export const stopServer = (): void => {
+  if (server) {
+    server.close();
+    server = null;
+  }
+};
+
+// Start the server if this file is run directly
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
+
+export default app;
