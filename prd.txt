@@ -1,0 +1,258 @@
+# Product Requirements Document (PRD)  
+
+**MCP-Server Marketplace (MVP)**  
+
+---
+
+## 1. Document Overview  
+**Purpose:**  
+Provide a centralized, searchable marketplace for Model Context Protocol (MCP) servers—connectors that let AI models access external tools—enabling developers to discover, evaluate, and install servers in one click via Web and in-IDE UIs.  
+
+**Scope (MVP):**  
+- Ingest data from the official `awesome-mcp-servers` GitHub repository in real time  
+- RAG search over server READMEs/manifests with Pinecone  
+- Web UI for browsing, filtering, and installing  
+- IDE panes (Cursor, Windsurf, VS Code) with one-click install/configure  
+- Basic analytics: track & display install counts  
+
+**Stakeholders:**  
+- **Product Manager:** Owns roadmap & success metrics  
+- **Engineering Team:** Backend (ingestion, search), Frontend (Web, IDE plugins)  
+- **AI Integrations Team:** RAG/Pinecone setup  
+- **Developer Users:** End-users installing MCP servers  
+
+---
+
+## 2. Problem Statement  
+Developers today must hunt through scattered GitHub repositories to find MCP servers, manually read READMEs, then clone, configure, and integrate each connector. There’s no unified catalog, search, ranking, or streamlined install flow, leading to wasted time and friction when building AI-powered solutions.  
+
+---
+
+## 3. Target Audience & User Personas  
+
+| Persona                | Description                                                      | Needs                                                             |
+|------------------------|------------------------------------------------------------------|-------------------------------------------------------------------|
+| **AI Engineer**        | Integrates LLMs with external tools (APIs, databases, services) | Rapid discovery & install of MCP servers relevant to project use |
+| **Full-Stack Dev**     | Builds apps that embed LLM capabilities                         | One-click configuration and minimal boilerplate                  |
+| **Data Scientist**     | Prototypes LLM pipelines                                        | Search by functionality (e.g. “OpenAI → SQL”)                     |
+
+---
+
+## 4. Goals & Success Metrics  
+**Primary Goals (MVP):**  
+1. **Discoverability:** Enable keyword/semantic search across all MCP servers  
+2. **Ease of Install:** One-click “Install & Configure” in Web & IDE  
+3. **Visibility:** Show metadata (version, tags, install count) for informed selection  
+
+**Success Metrics (by end of Q1 MVP):**  
+- **Search Usage:** ≥ 200 unique search sessions/week  
+- **Install Count:** ≥ 100 installs/week tracked by analytics  
+- **Time-to-First-Install:** ≤ 2 minutes from search to install  
+
+---
+
+## 5. User Journeys  
+
+1. **Web-first Explorer**  
+   - User lands on marketplace  
+   - Enters query (keywords or natural language)  
+   - Reviews top N ranked servers (name, desc, version, tags, install_count)  
+   - Clicks “Install” → triggers backend call and shows snippet/instructions  
+
+2. **IDE-centric Flow**  
+   - In VS Code pane, user types `/mcp search “translate api”`  
+   - List appears in side panel; user clicks server → manifest injected into `mcp.json`  
+   - Confirmation toast & install_count increment  
+
+---
+
+## 6. Functional Requirements  
+
+### 6.1 Data Ingestion  
+- **Source:** GitHub’s `awesome-mcp-servers` repo (watch & webhooks)  
+- **Frequency:** Real-time (via GitHub webhook), full sync nightly  
+- **Data Captured:**  
+  - `name`, `description`, `version`, `tags` (from manifest)  
+  - README content (for RAG indexing)  
+  - Repository URL, last-updated timestamp  
+
+### 6.2 Search & Retrieval  
+- **Vector Store:** Pinecone → embed README & manifest fields  
+- **Query Types:**  
+  - Free text (NL prompts)  
+  - Filter by tag, version, recency  
+- **Ranking:**  
+  - Semantic similarity score  
+  - Secondary sort by `install_count` (desc)  
+
+### 6.3 Web UI  
+- **Pages/Components:**  
+  - **Home/Search:** search bar, top filters, results list  
+  - **Server Card:** name, short desc, version badge, tags, install_count, “Install” button  
+  - **Detail View (modal or page):** full README, metadata, install history chart (optional)  
+- **Behaviors:**  
+  - Type-ahead suggestions from tag list  
+  - “Install” triggers Web API to update user’s local project (see IDE flows)  
+
+### 6.4 IDE Panes (Cursor, Windsurf, VS Code)  
+- **Integration Points:**  
+  - Plugin registers commands: `mcp.search`, `mcp.install`  
+- **UI:**  
+  - Side panel with search box + results list (mirrors Web UI)  
+  - Contextual “Install & Configure” button  
+- **Install Action:**  
+  - Append or create `mcp.json` entry in workspace root  
+  - Inject code snippet (e.g., import + setup) into active file if requested  
+
+### 6.5 Analytics  
+- **Tracked Events:**  
+  - `search_performed` (anonymous session id, query)  
+  - `server_installed` (server_id, timestamp)  
+- **Metrics:**  
+  - **install_count** per server (displayed on UI)  
+  - Dashboard view for admin (aggregate installs/week)  
+
+---
+
+## 7. Out of Scope (P2+)  
+- User-generated submissions or ratings  
+- Security vetting or code review of servers  
+- Monetization, user accounts, authentication  
+- Packaging (pip/npm/jar)—install only via injected config/snippet  
+
+---
+
+## 8. Data Model (MVP)  
+
+```json
+{
+  "servers": {
+    "serverId": {
+      "name": "mcp-openai-sql",
+      "description": "Query SQL DB via OpenAI",
+      "version": "1.2.0",
+      "tags": ["openai","sql","database"],
+      "repo_url": "...",
+      "readme": "...",            // full markdown
+      "last_updated": "2024-05-10T12:00:00Z",
+      "install_count": 42
+    }
+  }
+}
+```
+
+---
+
+## 9. Technical Architecture & Tech Stack  
+
+```
+┌────────────┐     Webhooks     ┌─────────────┐
+│ GitHub     │ ───────────────▶│ Ingestion   │
+│ awesome-MCP│◀─────────────── | Service     │
+└────────────┘                  └─────┬───────┘
+                                      │
+                                      ▼
+                           ┌────────────────────┐
+                           │ Vector Index (VPC) │◀─(Pinecone)
+                           └───┬────────────────┘
+   ┌────────────┐◀───────────┘
+   │ Web Server │───▶ React UI ─▶ Browser
+   │ + API      │───▶ IDE Plugins (Cursor, VS)
+   └────────────┘
+         │
+         ▼
+ ┌───────────────────┐
+ │ Analytics Store   │ (Postgres or DynamoDB)
+ └───────────────────┘
+```
+
+- **Backend:** Node.js + Express (API, ingestion)  
+- **Vector DB:** Pinecone (RAG retrieval)  
+- **Web UI:** React + Tailwind CSS  
+- **IDE Plugins:**  
+  - VS Code (TypeScript extension)  
+  - Cursor & Windsurf panes (SDK integrations)  
+- **Analytics:** PostgreSQL or DynamoDB (install events)  
+- **Hosting:** Vercel (Web), AWS Lambda (ingestion), Pinecone Cloud  
+
+---
+
+## 10. Non-Functional Requirements  
+- **Performance:**  
+  - Search latency < 300 ms for top N results  
+- **Scalability:**  
+  - Support 5k servers, 10k searches/day  
+- **Availability:**  
+  - 99.9% uptime for Web & API  
+- **Security:**  
+  - Webhooks authenticated via GitHub secrets  
+  - Node.js APIs behind HTTPS/TLS  
+
+---
+
+## 11. Timeline & Milestones  
+
+| Milestone                          | Duration | Acceptance Criteria                                           |
+|------------------------------------|----------|---------------------------------------------------------------|
+| **M1: Data Ingestion Service**     | 2 weeks  | Sync from GitHub, DB persisted, nightly full sync passes      |
+| **M2: Vector Index & RAG Search**  | 2 weeks  | Pinecone index built, basic semantic query returns top 5      |
+| **M3: Web UI – Search & Browse**   | 2 weeks  | Search bar + results page, server cards render metadata       |
+| **M4: IDE Pane – VS Code Plugin**  | 2 weeks  | Search in side panel, one-click inject into `mcp.json`        |
+| **M5: Analytics & Install Count**  | 1 week   | Track `server_installed`, update/display install_count on UI  |
+| **M6: Polish & QA**                | 1 week   | End-to-end install flow, NFR load test, documentation         |
+
+---
+
+## 12. Deliverables  
+- **This comprehensive PRD** covering audience, journeys, features, data model, tech stack, NFRs, timeline, metrics  
+- **Wireframes/Mockups** for Web UI (search, server card, detail view) and IDE pane  
+- **API Spec** (OpenAPI) for ingestion, search, analytics endpoints  
+- **Milestones & Acceptance Criteria** (as above)  
+
+---
+
+## 13. Success Metrics & KPIs  
+- **Search Adoption:** ≥ 200 unique sessions/week  
+- **Install Rate:** ≥ 100 installs/week  
+- **Time-to-Install:** Median ≤ 2 minutes  
+- **Uptime:** ≥ 99.9% Web/API availability  
+
+---
+
+## 14. Appendices: Wireframes  
+
+### 14.1 Web UI – Search Results  
+```
+┌──────────────────────────────────────────────┐
+│ [Search Bar_________________________] [🔍] │
+│ Filters: [tags v] [version v] [sort v]      │
+├──────────────────────────────────────────────┤
+│ • mcp-openai-sql  v1.2.0   [SQL][AI]         │
+│   Query SQL DB via OpenAI. Installs: 42     │
+│   [Install ▶]    [View Details ▸]           │
+│                                              │
+│ • mcp-google-search v0.4.1 [Google][API]     │
+│   Wrapper for Google Custom Search API.     │
+│   Installs: 18                              │
+│   [Install ▶]    [View Details ▸]           │
+└──────────────────────────────────────────────┘
+```
+
+### 14.2 IDE Pane (VS Code)  
+```
+┌─ MCP Marketplace ─────────────────────────┐
+│ 🔍 Search MCP servers: [translate embed]  │
+│ ───────────────────────────────────────── │
+│ 1. mcp-translator v0.3   [install ▶]      │
+│    “Translate text via …”                 │
+│ 2. mcp-summarizer v1.0   [install ▶]      │
+│    “Summarize docs using …”               │
+│ ▶ Type ≥Enter to inject selected manifest │
+└────────────────────────────────────────────┘
+```
+
+---
+
+### References  
+1. Let’sChat MVP Requirements Document by Alex de Bruyn (Medium)  
+2. PRD-MCP-Server Template Repository (GitHub)

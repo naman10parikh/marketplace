@@ -1,0 +1,77 @@
+# Task ID: 4
+# Title: Develop Core API Endpoints
+# Status: pending
+# Dependencies: 2, 3
+# Priority: high
+# Description: Create RESTful API endpoints for search, retrieval, and analytics functionality.
+# Details:
+1. Design and document API using OpenAPI specification
+2. Implement the following endpoints:
+   - GET /api/servers - List all servers with pagination and filtering
+   - GET /api/servers/:id - Get detailed info for a specific server
+   - GET /api/search - Search servers with query parameters for text, tags, etc.
+   - POST /api/servers/:id/install - Track installation event
+   - GET /api/tags - Get all available tags for filtering
+3. Implement proper error handling and status codes
+4. Add rate limiting and request validation
+5. Set up CORS for web and IDE clients
+6. Implement response caching where appropriate
+7. Add logging for API usage and errors
+
+# Test Strategy:
+1. Unit tests for each endpoint
+2. Integration tests with test database
+3. Load testing to verify performance under expected traffic
+4. Validate response formats against API spec
+5. Test error scenarios and edge cases
+
+# Subtasks:
+## 1. Design API specification and implement server listing endpoints [pending]
+### Dependencies: None
+### Description: Create OpenAPI specification and implement the first set of endpoints for listing and retrieving server information
+### Details:
+1. Design the complete API using OpenAPI 3.0 specification
+2. Document all endpoints, request/response schemas, and error codes
+3. Implement GET /api/servers endpoint with pagination (limit/offset parameters)
+4. Implement filtering capabilities (by status, tags, etc.)
+5. Implement GET /api/servers/:id endpoint for detailed server information
+6. Set up basic error handling structure for these endpoints
+7. Write unit tests for these endpoints
+
+## 2. Implement search and tags endpoints [pending]
+### Dependencies: 4.1
+### Description: Create the search functionality and tags retrieval endpoints
+### Details:
+1. Implement GET /api/search endpoint with text search capabilities
+2. Add query parameters for filtering search results (tags, status, etc.)
+3. Implement GET /api/tags endpoint to retrieve all available tags
+4. Ensure search results are properly paginated
+5. Optimize search queries for performance
+6. Add appropriate error handling for search-specific issues
+7. Write unit tests for search and tags endpoints
+
+## 3. Implement installation tracking and enhance error handling [pending]
+### Dependencies: 4.1, 4.2
+### Description: Add installation tracking endpoint and improve overall error handling
+### Details:
+1. Implement POST /api/servers/:id/install endpoint to track installation events
+2. Store installation data with timestamps and client information
+3. Implement comprehensive error handling across all endpoints
+4. Add appropriate HTTP status codes for different error scenarios
+5. Create standardized error response format
+6. Implement request validation using a validation library
+7. Write unit tests for installation tracking and error scenarios
+
+## 4. Implement API security, performance, and observability features [pending]
+### Dependencies: 4.1, 4.2, 4.3
+### Description: Add rate limiting, CORS, caching, and logging to the API
+### Details:
+1. Implement rate limiting for all API endpoints
+2. Configure different rate limits based on endpoint sensitivity
+3. Set up CORS to allow access from web and IDE clients
+4. Implement response caching for appropriate endpoints (GET /api/servers, GET /api/tags)
+5. Configure cache invalidation strategies
+6. Add comprehensive logging for all API requests
+7. Log errors with appropriate context for debugging
+8. Create monitoring endpoints for API health and usage statistics
+

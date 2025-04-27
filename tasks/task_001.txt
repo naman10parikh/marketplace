@@ -1,0 +1,56 @@
+# Task ID: 1
+# Title: Set up GitHub Webhook Integration
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Create a service to ingest data from the 'awesome-mcp-servers' GitHub repository in real-time using webhooks.
+# Details:
+Implement a Node.js + Express service that:
+1. Registers webhooks with the GitHub repository
+2. Authenticates incoming webhook requests using GitHub secrets
+3. Processes repository events (commits, PRs, etc.)
+4. Extracts server metadata (name, description, version, tags) from manifests
+5. Parses README content for RAG indexing
+6. Stores the data in a structured format
+7. Implements a nightly full sync job as a fallback
+
+The service should handle webhook payload validation, error handling, and logging.
+
+# Test Strategy:
+1. Mock GitHub webhook payloads to test event handling
+2. Verify correct extraction of metadata from sample manifests
+3. Test authentication mechanism with valid and invalid secrets
+4. Validate the nightly sync process with a test repository
+5. Measure performance under load with simulated webhook events
+
+# Subtasks:
+## 1. Set up Express server with webhook endpoint [pending]
+### Dependencies: None
+### Description: Create the foundation of the webhook service with a basic Express server that can receive webhook requests from GitHub
+### Details:
+Implement a Node.js Express application with the following components: 1) Basic server setup with proper error handling, 2) A dedicated endpoint (e.g., '/webhook') to receive GitHub webhook payloads, 3) Request parsing middleware for JSON payloads, 4) Basic logging infrastructure using Winston or similar, 5) Environment configuration for development and production environments, 6) Initial project structure following best practices.
+
+## 2. Implement GitHub webhook authentication [pending]
+### Dependencies: 1.1
+### Description: Add security to the webhook endpoint by implementing GitHub's signature verification to ensure requests are legitimate
+### Details:
+Extend the webhook endpoint to: 1) Extract the 'X-Hub-Signature-256' header from incoming requests, 2) Retrieve the webhook secret from environment variables, 3) Compute the HMAC SHA-256 signature of the request body using the secret, 4) Compare the computed signature with the one in the header, 5) Reject requests with invalid signatures, 6) Add comprehensive error handling for authentication failures with appropriate HTTP responses and logging.
+
+## 3. Process GitHub events and extract repository data [pending]
+### Dependencies: 1.2
+### Description: Implement handlers for relevant GitHub webhook events to extract and process server metadata from the repository
+### Details:
+Create event handlers for: 1) 'push' events to detect changes to manifest files and README, 2) 'pull_request' events for merged PRs that modify relevant files, 3) Parse manifest files to extract server metadata (name, description, version, tags), 4) Extract and process README content for RAG indexing, 5) Implement a structured data model for storing the extracted information, 6) Add validation for the extracted data to ensure consistency.
+
+## 4. Implement data storage and persistence layer [pending]
+### Dependencies: 1.3
+### Description: Create a data storage mechanism to persist the extracted server metadata and README content
+### Details:
+Implement a persistence layer that: 1) Defines a schema for storing server metadata and content, 2) Creates an abstraction layer for data operations (create, read, update, delete), 3) Implements transaction support for atomic operations, 4) Handles data versioning to track changes over time, 5) Provides query capabilities to retrieve server information, 6) Includes error handling and retry mechanisms for data operations.
+
+## 5. Develop nightly full sync job and webhook registration [pending]
+### Dependencies: 1.4
+### Description: Create a fallback synchronization mechanism and automate the webhook registration process
+### Details:
+Implement: 1) A scheduled job using cron or similar to perform a full repository sync nightly, 2) GitHub API integration to programmatically register webhooks with the repository, 3) Comparison logic to detect differences between webhook data and full sync data, 4) Reconciliation process to resolve any discrepancies, 5) Monitoring and alerting for sync failures, 6) Documentation for the entire webhook service including setup instructions and operational procedures.
+

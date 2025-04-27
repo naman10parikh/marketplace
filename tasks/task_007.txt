@@ -1,0 +1,94 @@
+# Task ID: 7
+# Title: Develop VS Code Extension
+# Status: pending
+# Dependencies: 4
+# Priority: medium
+# Description: Create a VS Code extension for searching and installing MCP servers directly from the IDE.
+# Details:
+1. Set up VS Code extension project (TypeScript)
+2. Implement side panel UI with search box and results list
+3. Create commands for mcp.search and mcp.install
+4. Implement workspace detection and mcp.json handling
+5. Add functionality to:
+   - Search servers using the API
+   - Display results in the side panel
+   - Install selected server by updating mcp.json
+   - Inject code snippets into active file if requested
+6. Add configuration options for the extension
+7. Implement telemetry for usage tracking
+8. Create documentation and help resources
+
+# Test Strategy:
+1. Manual testing in VS Code
+2. Extension API tests
+3. Test installation flow with various project structures
+4. Verify mcp.json creation and updating
+5. Test code snippet injection in different file types
+
+# Subtasks:
+## 1. Set up VS Code extension project structure [pending]
+### Dependencies: None
+### Description: Initialize the VS Code extension project with TypeScript and establish the basic scaffolding needed for development.
+### Details:
+1. Install Node.js and npm if not already installed
+2. Install Yeoman and VS Code Extension Generator: `npm install -g yo generator-code`
+3. Generate extension scaffold: `yo code`
+4. Configure TypeScript settings in tsconfig.json
+5. Set up extension manifest (package.json) with basic metadata, activation events, and commands
+6. Create initial folder structure (src/, resources/, etc.)
+7. Set up testing framework with basic tests
+8. Ensure the extension can be launched in debug mode
+
+## 2. Implement side panel UI and basic commands [pending]
+### Dependencies: 7.1
+### Description: Create the extension's user interface with a side panel containing search functionality and implement the core commands.
+### Details:
+1. Create a WebviewPanel or TreeView for the side panel UI
+2. Design and implement the search box and results list UI using HTML/CSS
+3. Register the commands `mcp.search` and `mcp.install` in package.json
+4. Implement command handlers in extension.ts
+5. Set up communication between the webview and extension host
+6. Create icons and other visual assets for the extension
+7. Implement basic state management for the panel
+8. Add keyboard shortcuts for the commands
+
+## 3. Implement MCP API integration and search functionality [pending]
+### Dependencies: 7.2
+### Description: Connect to the MCP API to enable server searching and display results in the side panel.
+### Details:
+1. Create a service class to handle API communication
+2. Implement the search functionality to query the MCP API
+3. Parse and format search results for display
+4. Add error handling for API requests
+5. Implement pagination or infinite scrolling for search results
+6. Add filtering options for search results
+7. Create data models for server information
+8. Implement caching for recent searches to improve performance
+
+## 4. Implement workspace detection and server installation [pending]
+### Dependencies: 7.3
+### Description: Add functionality to detect the current workspace, handle mcp.json files, and install selected servers.
+### Details:
+1. Implement workspace detection to find project root
+2. Create utilities to read and write mcp.json files
+3. Implement the server installation process
+4. Add validation for compatibility with the current project
+5. Create progress indicators for installation process
+6. Implement error handling for installation failures
+7. Add support for different project types
+8. Create notification system for installation events
+
+## 5. Add configuration, code snippets, and documentation [pending]
+### Dependencies: 7.4
+### Description: Implement extension configuration options, code snippet injection, telemetry, and create documentation.
+### Details:
+1. Add configuration options in package.json
+2. Implement settings UI in the extension
+3. Create code snippet templates for different languages
+4. Implement snippet injection into active files
+5. Add telemetry for tracking extension usage (with opt-out option)
+6. Write comprehensive README.md with installation and usage instructions
+7. Create additional documentation (changelog, contributing guide)
+8. Add contextual help within the extension UI
+9. Package the extension for publishing to VS Code Marketplace
+
