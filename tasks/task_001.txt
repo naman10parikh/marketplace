@@ -1,56 +1,49 @@
 # Task ID: 1
-# Title: Set up GitHub Webhook Integration
+# Title: Set up project infrastructure and base architecture
 # Status: pending
 # Dependencies: None
 # Priority: high
-# Description: Create a service to ingest data from the 'awesome-mcp-servers' GitHub repository in real-time using webhooks.
+# Description: Initialize the project structure, configure development environment, and set up the foundational architecture for the MCP Server Marketplace.
 # Details:
-Implement a Node.js + Express service that:
-1. Registers webhooks with the GitHub repository
-2. Authenticates incoming webhook requests using GitHub secrets
-3. Processes repository events (commits, PRs, etc.)
-4. Extracts server metadata (name, description, version, tags) from manifests
-5. Parses README content for RAG indexing
-6. Stores the data in a structured format
-7. Implements a nightly full sync job as a fallback
-
-The service should handle webhook payload validation, error handling, and logging.
+Create a Node.js/Express project with TypeScript. Set up the directory structure following best practices (routes, controllers, services, models). Configure ESLint, Prettier, and testing framework (Jest). Initialize Git repository with CI/CD pipeline configuration. Set up Docker for local development. Create configuration files for different environments (dev, test, prod). Implement basic error handling middleware and logging.
 
 # Test Strategy:
-1. Mock GitHub webhook payloads to test event handling
-2. Verify correct extraction of metadata from sample manifests
-3. Test authentication mechanism with valid and invalid secrets
-4. Validate the nightly sync process with a test repository
-5. Measure performance under load with simulated webhook events
+Verify project structure and configuration. Run linting and basic tests to ensure the setup is working correctly. Test the CI/CD pipeline with a simple build.
 
 # Subtasks:
-## 1. Set up Express server with webhook endpoint [pending]
+## 1. Initialize Node.js/Express project with TypeScript [pending]
 ### Dependencies: None
-### Description: Create the foundation of the webhook service with a basic Express server that can receive webhook requests from GitHub
+### Description: Set up the base Node.js project with Express framework and TypeScript configuration
 ### Details:
-Implement a Node.js Express application with the following components: 1) Basic server setup with proper error handling, 2) A dedicated endpoint (e.g., '/webhook') to receive GitHub webhook payloads, 3) Request parsing middleware for JSON payloads, 4) Basic logging infrastructure using Winston or similar, 5) Environment configuration for development and production environments, 6) Initial project structure following best practices.
+Create a new directory for the project. Initialize npm with 'npm init'. Install core dependencies: express, typescript, ts-node, @types/node, @types/express. Create tsconfig.json with appropriate compiler options (target: es6, module: commonjs, outDir: dist, rootDir: src, strict: true). Create a basic server.ts file with Express initialization. Set up npm scripts for development and building (start, build, dev).
 
-## 2. Implement GitHub webhook authentication [pending]
+## 2. Establish project directory structure and Git repository [pending]
 ### Dependencies: 1.1
-### Description: Add security to the webhook endpoint by implementing GitHub's signature verification to ensure requests are legitimate
+### Description: Create the directory structure following best practices and initialize Git with proper configuration
 ### Details:
-Extend the webhook endpoint to: 1) Extract the 'X-Hub-Signature-256' header from incoming requests, 2) Retrieve the webhook secret from environment variables, 3) Compute the HMAC SHA-256 signature of the request body using the secret, 4) Compare the computed signature with the one in the header, 5) Reject requests with invalid signatures, 6) Add comprehensive error handling for authentication failures with appropriate HTTP responses and logging.
+Create the following directory structure: src/{routes, controllers, services, models, middleware, utils, config}. Add README.md with project overview. Initialize Git repository with 'git init'. Create .gitignore file (include node_modules, dist, .env files, logs). Create initial commit with base structure. Set up GitHub/GitLab repository and push initial commit. Create development branch for ongoing work.
 
-## 3. Process GitHub events and extract repository data [pending]
+## 3. Configure code quality tools and testing framework [pending]
 ### Dependencies: 1.2
-### Description: Implement handlers for relevant GitHub webhook events to extract and process server metadata from the repository
+### Description: Set up ESLint, Prettier, and Jest for code quality and testing
 ### Details:
-Create event handlers for: 1) 'push' events to detect changes to manifest files and README, 2) 'pull_request' events for merged PRs that modify relevant files, 3) Parse manifest files to extract server metadata (name, description, version, tags), 4) Extract and process README content for RAG indexing, 5) Implement a structured data model for storing the extracted information, 6) Add validation for the extracted data to ensure consistency.
+Install ESLint, Prettier and related dependencies. Create .eslintrc.js with TypeScript configuration. Create .prettierrc with team's code style preferences. Set up lint and format npm scripts. Install Jest, ts-jest, @types/jest, and supertest for API testing. Configure Jest in jest.config.js for TypeScript support. Create a basic test file to verify the setup. Add test and test:watch npm scripts.
 
-## 4. Implement data storage and persistence layer [pending]
-### Dependencies: 1.3
-### Description: Create a data storage mechanism to persist the extracted server metadata and README content
+## 4. Implement environment configuration system [pending]
+### Dependencies: 1.2
+### Description: Create configuration files for different environments and implement a configuration management system
 ### Details:
-Implement a persistence layer that: 1) Defines a schema for storing server metadata and content, 2) Creates an abstraction layer for data operations (create, read, update, delete), 3) Implements transaction support for atomic operations, 4) Handles data versioning to track changes over time, 5) Provides query capabilities to retrieve server information, 6) Includes error handling and retry mechanisms for data operations.
+Install dotenv package. Create .env.example file with required variables. Create src/config/index.ts to load and validate environment variables. Implement configuration objects for different environments (development, test, production). Add environment-specific validation rules. Create a configuration service that provides access to the current environment configuration. Document required environment variables in README.md.
 
-## 5. Develop nightly full sync job and webhook registration [pending]
+## 5. Set up Docker for local development [pending]
 ### Dependencies: 1.4
-### Description: Create a fallback synchronization mechanism and automate the webhook registration process
+### Description: Create Docker and Docker Compose configuration for local development environment
 ### Details:
-Implement: 1) A scheduled job using cron or similar to perform a full repository sync nightly, 2) GitHub API integration to programmatically register webhooks with the repository, 3) Comparison logic to detect differences between webhook data and full sync data, 4) Reconciliation process to resolve any discrepancies, 5) Monitoring and alerting for sync failures, 6) Documentation for the entire webhook service including setup instructions and operational procedures.
+Create Dockerfile for the application with appropriate Node.js base image. Set up multi-stage build process for development and production. Create docker-compose.yml with application service and any required dependencies (database, cache, etc.). Configure volume mapping for hot-reloading in development. Set up environment variable passing from .env to containers. Add Docker-specific npm scripts (docker:build, docker:up, docker:down). Document Docker usage in README.md.
+
+## 6. Implement error handling and logging middleware [pending]
+### Dependencies: 1.1, 1.4
+### Description: Create middleware for consistent error handling and logging throughout the application
+### Details:
+Install logging library (winston or pino). Create src/middleware/logger.ts for application logging. Implement different log levels based on environment. Create src/middleware/errorHandler.ts for centralized error handling. Implement custom error classes in src/utils/errors.ts. Create middleware for catching async errors. Implement request ID tracking for request tracing. Add middleware to the Express application in server.ts. Create basic health check endpoint at /health.
 

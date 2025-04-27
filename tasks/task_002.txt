@@ -1,82 +1,55 @@
 # Task ID: 2
-# Title: Implement Data Storage Layer
+# Title: Implement authentication and user management
 # Status: pending
 # Dependencies: 1
 # Priority: high
-# Description: Create a database schema and API for storing and retrieving MCP server metadata.
+# Description: Build the authentication system with signup, login, and session management using JWT and secure cookies.
 # Details:
-1. Set up a PostgreSQL database with the schema matching the data model in the PRD
-2. Create tables for servers with fields for name, description, version, tags, repo_url, readme, last_updated, and install_count
-3. Implement data access layer with CRUD operations
-4. Add indexing for efficient querying by various fields
-5. Implement versioning to track changes to server metadata
-6. Create API endpoints for:
-   - Getting all servers
-   - Getting a specific server by ID
-   - Updating server metadata
-   - Incrementing install count
-7. Add validation for incoming data
-8. Implement error handling and transaction management
+Create user model with email, password hash, and role fields. Implement /signup endpoint with email verification. Build /login endpoint that returns JWT in HTTP-only secure cookies. Create /logout endpoint to invalidate sessions. Implement /me endpoint to get current user info. Add middleware for route protection based on authentication and roles. Set up password reset flow. Implement proper error handling for auth failures.
 
 # Test Strategy:
-1. Unit tests for CRUD operations
-2. Integration tests with test database
-3. Performance testing for read/write operations
-4. Validate schema constraints and indexing
-5. Test concurrent updates to install_count
+Unit tests for user model and auth services. Integration tests for signup, login, and logout flows. Security tests for JWT implementation and cookie settings. Test role-based access control.
 
 # Subtasks:
-## 1. Set up PostgreSQL database schema [pending]
+## 1. Create User Model and Database Schema [pending]
 ### Dependencies: None
-### Description: Create the database schema with tables for server metadata according to the PRD data model
+### Description: Define the user data model with required fields and create the database schema
 ### Details:
-1. Initialize PostgreSQL database
-2. Create 'servers' table with fields: id, name, description, version, tags (array), repo_url, readme (text), last_updated (timestamp), install_count (integer)
-3. Create 'server_versions' table to track metadata changes with fields: server_id, version_number, changed_fields, timestamp, changed_by
-4. Set up appropriate primary keys, foreign keys, and constraints
-5. Add indexes on frequently queried fields: name, tags, version, last_updated
-6. Document the schema with comments
+Create a User model with fields: id (primary key), email (unique), passwordHash, role (enum: user, admin), emailVerified (boolean), verificationToken (nullable), resetPasswordToken (nullable), resetPasswordExpiry (nullable), createdAt, and updatedAt. Set up database migrations. Implement password hashing using bcrypt with appropriate salt rounds. Add validation for email format and password strength.
 
-## 2. Implement data access layer [pending]
+## 2. Implement Signup Endpoint with Email Verification [pending]
 ### Dependencies: 2.1
-### Description: Create a data access layer with CRUD operations and transaction management
+### Description: Create the user registration endpoint with email verification functionality
 ### Details:
-1. Create a database connection manager with connection pooling
-2. Implement base CRUD operations for servers table:
-   - createServer(serverData)
-   - getServerById(id)
-   - updateServer(id, serverData)
-   - deleteServer(id)
-   - getAllServers(filters, pagination)
-3. Implement versioning logic to track changes in server_versions table
-4. Add transaction management to ensure data consistency
-5. Implement error handling with appropriate error types
-6. Write unit tests for the data access layer
+Build POST /auth/signup endpoint that accepts email and password. Validate input, check for existing users, hash password, and store new user with emailVerified=false. Generate a verification token (JWT or UUID) and store it with the user. Integrate with email service to send verification email containing a link with the token. Create GET /auth/verify endpoint that validates the token and sets emailVerified=true. Add proper error handling for duplicate emails and validation failures.
 
-## 3. Create API endpoints for server metadata [pending]
-### Dependencies: 2.2
-### Description: Develop REST API endpoints for interacting with server metadata
+## 3. Implement Login Endpoint with JWT [pending]
+### Dependencies: 2.1
+### Description: Create the login endpoint that authenticates users and issues JWT tokens
 ### Details:
-1. Create the following API endpoints:
-   - GET /servers - List all servers with filtering and pagination
-   - GET /servers/:id - Get a specific server by ID
-   - POST /servers - Create a new server
-   - PUT /servers/:id - Update server metadata
-   - PATCH /servers/:id/install_count - Increment install count
-2. Implement request validation using a schema validation library
-3. Add proper error responses with appropriate HTTP status codes
-4. Implement query parameter handling for filtering and pagination
-5. Add API documentation using OpenAPI/Swagger
+Build POST /auth/login endpoint that accepts email and password. Verify credentials by comparing password hash. Check if email is verified. Generate JWT containing userId and role with appropriate expiration (15-60 minutes). Set JWT in HTTP-only, secure, SameSite=Strict cookie. Implement CSRF protection with double-submit pattern or separate CSRF token. Return user data (excluding sensitive fields) in response. Add rate limiting to prevent brute force attacks.
 
-## 4. Implement advanced querying and optimization [pending]
-### Dependencies: 2.2, 2.3
-### Description: Add advanced querying capabilities and optimize database performance
+## 4. Implement Logout and Session Management [pending]
+### Dependencies: 2.3
+### Description: Create logout functionality and handle session management
 ### Details:
-1. Implement full-text search for server descriptions and readme content
-2. Add advanced filtering by multiple tags, version ranges, and update dates
-3. Optimize query performance with additional indexes based on common query patterns
-4. Implement caching for frequently accessed data
-5. Add database migration scripts for future schema updates
-6. Create performance tests to ensure efficient querying
-7. Document query patterns and optimization strategies
+Build POST /auth/logout endpoint that clears the auth cookie. Consider implementing a token blacklist using Redis for immediate invalidation of active tokens. Add refresh token functionality with longer expiration to automatically renew JWTs. Store refresh tokens in database with user association. Create POST /auth/refresh endpoint to issue new JWTs using refresh tokens. Implement token rotation for security.
+
+## 5. Create Authentication Middleware [pending]
+### Dependencies: 2.3
+### Description: Implement middleware for route protection based on authentication and roles
+### Details:
+Create isAuthenticated middleware that verifies JWT from cookies, handles token expiration, and attaches user to request object. Implement requireRole middleware that checks user's role against required roles for the route. Build error handling for unauthorized access with appropriate HTTP status codes (401 for unauthenticated, 403 for unauthorized). Add middleware to refresh tokens automatically when close to expiration. Test middleware with protected routes.
+
+## 6. Implement User Profile Management [pending]
+### Dependencies: 2.5
+### Description: Create endpoints for retrieving and updating user information
+### Details:
+Build GET /auth/me endpoint protected by isAuthenticated middleware to return current user data. Implement PATCH /auth/me for updating profile information (name, email, etc.). Add validation for profile updates. Create endpoints for changing password that requires current password verification. Implement proper error handling for all user operations. Ensure sensitive data like password hash is never returned in responses.
+
+## 7. Implement Password Reset Flow [pending]
+### Dependencies: 2.1, 2.3
+### Description: Create the forgot password and reset password functionality
+### Details:
+Build POST /auth/forgot-password endpoint that accepts email, validates user exists, generates a time-limited reset token (expires in 1 hour), and sends reset email. Create POST /auth/reset-password endpoint that verifies the reset token, accepts new password, validates password strength, updates the password hash, and invalidates the reset token. Implement security measures like rate limiting and IP logging for password reset attempts. Add comprehensive error handling with user-friendly messages that don't leak information.
 

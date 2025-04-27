@@ -1,94 +1,49 @@
 # Task ID: 7
-# Title: Develop VS Code Extension
+# Title: Create server submission and survey functionality
 # Status: pending
-# Dependencies: 4
+# Dependencies: 2, 3, 6
 # Priority: medium
-# Description: Create a VS Code extension for searching and installing MCP servers directly from the IDE.
+# Description: Implement the authenticated workflows for submitting new servers and providing feedback through surveys.
 # Details:
-1. Set up VS Code extension project (TypeScript)
-2. Implement side panel UI with search box and results list
-3. Create commands for mcp.search and mcp.install
-4. Implement workspace detection and mcp.json handling
-5. Add functionality to:
-   - Search servers using the API
-   - Display results in the side panel
-   - Install selected server by updating mcp.json
-   - Inject code snippets into active file if requested
-6. Add configuration options for the extension
-7. Implement telemetry for usage tracking
-8. Create documentation and help resources
+Create server submission form with live manifest validation. Implement submission workflow (pending → approved). Build survey modal with rating and comments fields. Create API endpoints for submission and survey data. Implement authorization checks to ensure only authenticated users can submit or survey. Add submission status dashboard for contributors. Create notification system for submission status changes.
 
 # Test Strategy:
-1. Manual testing in VS Code
-2. Extension API tests
-3. Test installation flow with various project structures
-4. Verify mcp.json creation and updating
-5. Test code snippet injection in different file types
+Unit tests for submission and survey components. Integration tests for the complete submission workflow. Validation tests for manifest schema checking. User testing of the submission and survey experiences.
 
 # Subtasks:
-## 1. Set up VS Code extension project structure [pending]
+## 1. Create server submission form with validation [pending]
 ### Dependencies: None
-### Description: Initialize the VS Code extension project with TypeScript and establish the basic scaffolding needed for development.
+### Description: Build the UI form for server submissions with real-time manifest validation to ensure data quality before submission
 ### Details:
-1. Install Node.js and npm if not already installed
-2. Install Yeoman and VS Code Extension Generator: `npm install -g yo generator-code`
-3. Generate extension scaffold: `yo code`
-4. Configure TypeScript settings in tsconfig.json
-5. Set up extension manifest (package.json) with basic metadata, activation events, and commands
-6. Create initial folder structure (src/, resources/, etc.)
-7. Set up testing framework with basic tests
-8. Ensure the extension can be launched in debug mode
+Implement a form component with fields for server details including name, description, manifest URL, and tags. Add client-side validation to check required fields. Create a manifest validator that fetches and validates the manifest structure in real-time as users type the URL. Show validation feedback with clear error messages. Include a preview of the server data based on the manifest.
 
-## 2. Implement side panel UI and basic commands [pending]
+## 2. Implement API endpoints for server submissions [pending]
 ### Dependencies: 7.1
-### Description: Create the extension's user interface with a side panel containing search functionality and implement the core commands.
+### Description: Create backend API endpoints to handle server submissions with proper authentication and data validation
 ### Details:
-1. Create a WebviewPanel or TreeView for the side panel UI
-2. Design and implement the search box and results list UI using HTML/CSS
-3. Register the commands `mcp.search` and `mcp.install` in package.json
-4. Implement command handlers in extension.ts
-5. Set up communication between the webview and extension host
-6. Create icons and other visual assets for the extension
-7. Implement basic state management for the panel
-8. Add keyboard shortcuts for the commands
+Develop RESTful API endpoints for creating, reading, and updating server submissions. Implement server-side validation of submission data and manifest structure. Create database models for storing submission data with status field (pending/approved/rejected). Add authentication middleware to ensure only logged-in users can submit. Include rate limiting to prevent abuse. Document the API endpoints for frontend integration.
 
-## 3. Implement MCP API integration and search functionality [pending]
+## 3. Build submission workflow and status dashboard [pending]
 ### Dependencies: 7.2
-### Description: Connect to the MCP API to enable server searching and display results in the side panel.
+### Description: Implement the submission workflow system and create a dashboard for users to track their submissions
 ### Details:
-1. Create a service class to handle API communication
-2. Implement the search functionality to query the MCP API
-3. Parse and format search results for display
-4. Add error handling for API requests
-5. Implement pagination or infinite scrolling for search results
-6. Add filtering options for search results
-7. Create data models for server information
-8. Implement caching for recent searches to improve performance
+Create a workflow system that handles the state transitions (pending → approved/rejected). Build an admin interface for reviewing and approving/rejecting submissions. Implement a user dashboard that displays all submissions from the current user with their statuses. Add filtering and sorting capabilities to the dashboard. Include submission details view with full information about each submission.
 
-## 4. Implement workspace detection and server installation [pending]
-### Dependencies: 7.3
-### Description: Add functionality to detect the current workspace, handle mcp.json files, and install selected servers.
+## 4. Create survey modal with rating system [pending]
+### Dependencies: 7.2
+### Description: Develop a survey interface for collecting user feedback about servers with ratings and comments
 ### Details:
-1. Implement workspace detection to find project root
-2. Create utilities to read and write mcp.json files
-3. Implement the server installation process
-4. Add validation for compatibility with the current project
-5. Create progress indicators for installation process
-6. Implement error handling for installation failures
-7. Add support for different project types
-8. Create notification system for installation events
+Design and implement a modal component for surveys that can be triggered from server details pages. Include a star rating system (1-5 stars) with clear visual feedback. Add text fields for collecting detailed comments and feedback. Implement client-side validation to ensure required fields are completed. Create a responsive design that works well on both desktop and mobile devices.
 
-## 5. Add configuration, code snippets, and documentation [pending]
+## 5. Implement API endpoints for survey data [pending]
 ### Dependencies: 7.4
-### Description: Implement extension configuration options, code snippet injection, telemetry, and create documentation.
+### Description: Create backend API endpoints to handle survey submissions with authentication and data validation
 ### Details:
-1. Add configuration options in package.json
-2. Implement settings UI in the extension
-3. Create code snippet templates for different languages
-4. Implement snippet injection into active files
-5. Add telemetry for tracking extension usage (with opt-out option)
-6. Write comprehensive README.md with installation and usage instructions
-7. Create additional documentation (changelog, contributing guide)
-8. Add contextual help within the extension UI
-9. Package the extension for publishing to VS Code Marketplace
+Develop RESTful API endpoints for creating and retrieving survey data. Implement server-side validation of survey inputs. Create database models for storing survey responses with relationships to users and servers. Add authentication checks to ensure only authenticated users can submit surveys. Implement logic to prevent duplicate surveys from the same user for the same server. Add aggregation endpoints to calculate average ratings and compile feedback.
+
+## 6. Build notification system for submission status changes [pending]
+### Dependencies: 7.3, 7.5
+### Description: Create a notification system to alert users about changes to their submission status
+### Details:
+Implement a notification service that monitors submission status changes. Create database models for storing notification data. Develop a notification center UI component to display recent notifications to users. Add real-time notifications using WebSockets or a similar technology. Implement email notifications for important status changes. Create preference settings to allow users to configure notification preferences.
 

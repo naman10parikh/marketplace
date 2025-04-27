@@ -1,58 +1,55 @@
 # Task ID: 6
-# Title: Implement Analytics System
+# Title: Develop core Web UI components
 # Status: pending
-# Dependencies: 2, 4
+# Dependencies: 2, 5
 # Priority: medium
-# Description: Create a system to track and display installation metrics and search usage.
+# Description: Create the React-based web interface for browsing, searching, and viewing MCP servers.
 # Details:
-1. Design analytics schema in PostgreSQL or DynamoDB
-2. Implement event tracking for:
-   - search_performed (session ID, query)
-   - server_installed (server ID, timestamp)
-3. Create API endpoints to:
-   - Record analytics events
-   - Retrieve aggregated metrics
-4. Implement a background job to update install_count for each server
-5. Add basic dashboard view for admins
-6. Implement data retention policies
-7. Add anonymization for privacy compliance
-8. Create charts for installation trends
+Set up React project with TypeScript and component library. Create home page with search bar and filters. Implement server card component with metadata display. Build server detail page showing full README, metadata, and analytics. Create responsive layout for mobile and desktop. Implement client-side routing. Add authentication UI components (login/signup forms). Implement search results with pagination. Create loading states and error handling for API interactions.
 
 # Test Strategy:
-1. Verify event recording with test events
-2. Validate aggregation logic for metrics
-3. Test concurrent event handling
-4. Verify dashboard data accuracy
-5. Load test with simulated high volume of events
+Unit tests for React components. Integration tests for search and navigation flows. UI tests for responsive design. Accessibility testing. User testing for search and browse experience.
 
 # Subtasks:
-## 1. Design and implement analytics data schema [pending]
+## 1. Set up React project with TypeScript and component library [pending]
 ### Dependencies: None
-### Description: Create the database schema to store analytics events and aggregated metrics
+### Description: Initialize the React application with TypeScript support and integrate a UI component library for consistent design
 ### Details:
-Design and implement a schema in PostgreSQL with the following tables: 1) events table with columns for event_type, timestamp, session_id, server_id, and a JSON field for event-specific data; 2) daily_metrics table for pre-aggregated data with columns for date, metric_name, and metric_value; 3) servers table with installation data. Include appropriate indexes on timestamp, event_type, and server_id fields. Add partitioning by date for the events table to improve query performance and facilitate data retention policies.
+Create a new React project using Create React App with TypeScript template. Install and configure a component library (e.g., Material UI, Chakra UI, or Ant Design). Set up ESLint and Prettier for code quality. Configure folder structure following best practices (components, pages, hooks, utils, etc.). Set up client-side routing with React Router. Create initial theme configuration for consistent styling.
 
-## 2. Implement event tracking and API endpoints [pending]
+## 2. Implement authentication UI components [pending]
 ### Dependencies: 6.1
-### Description: Create API endpoints to record analytics events and retrieve metrics
+### Description: Create login, signup, and user profile components with form validation
 ### Details:
-Implement REST API endpoints: 1) POST /api/analytics/events to record events like search_performed and server_installed with appropriate validation; 2) GET /api/analytics/metrics to retrieve aggregated metrics with filtering options by date range and metric type. Implement middleware to capture and store search events automatically. Add rate limiting to prevent abuse. Include proper error handling and logging. Ensure all endpoints are properly authenticated and authorized.
+Build login form with email/password fields and validation. Create signup form with necessary fields (username, email, password, etc.) and validation. Implement password reset flow UI. Design user profile component to display user information. Add form validation using a library like Formik or React Hook Form. Create authentication context/provider for managing auth state. Implement UI for displaying authentication errors from API.
 
-## 3. Create background processing for metrics aggregation [pending]
-### Dependencies: 6.1, 6.2
-### Description: Implement background jobs to process raw events into aggregated metrics
+## 3. Create home page with search functionality [pending]
+### Dependencies: 6.1
+### Description: Develop the main landing page with search bar, filters, and initial layout
 ### Details:
-Create a scheduled background job using a task queue (like Celery) that runs hourly to process raw events into the daily_metrics table. Implement aggregation functions for: total searches, unique searches, installation count, active servers, and user engagement metrics. Add a separate daily job to update the install_count for each server. Include error handling, retry logic, and monitoring for these background jobs. Implement a mechanism to backfill historical data if needed.
+Design and implement the home page layout. Create a prominent search bar component with autocomplete suggestions. Implement filter components (dropdown, checkbox, radio buttons) for refining search. Add category browsing section. Create responsive navigation header. Design footer with relevant links. Implement client-side search functionality that will later connect to the API.
 
-## 4. Build admin dashboard with visualization components [pending]
-### Dependencies: 6.2, 6.3
-### Description: Create a dashboard UI for administrators to view analytics data
+## 4. Build server card component for search results [pending]
+### Dependencies: 6.3
+### Description: Create reusable server card component to display MCP server metadata in search results
 ### Details:
-Implement an admin dashboard page with: 1) Overview section showing key metrics; 2) Installation trends chart using a charting library like Chart.js; 3) Search usage statistics with filtering options; 4) Server activity heatmap. Make all charts interactive with date range selectors. Ensure the dashboard is responsive and performs well with large datasets by implementing pagination and lazy loading. Add export functionality for reports in CSV format.
+Design server card UI with title, description, tags, and key metadata. Implement hover and focus states for better UX. Add favorite/bookmark functionality to cards. Create skeleton loading state for cards. Ensure the card is responsive across device sizes. Add truncation for long text with tooltips. Include visual indicators for server status or popularity.
 
-## 5. Implement data retention and privacy compliance features [pending]
-### Dependencies: 6.1, 6.2, 6.3
-### Description: Add data retention policies and privacy compliance features
+## 5. Implement search results page with pagination [pending]
+### Dependencies: 6.3, 6.4
+### Description: Create the search results view with server cards, pagination, and sorting options
 ### Details:
-Implement a data retention policy that automatically archives events older than 90 days to cold storage and purges data older than 1 year. Create an anonymization process that removes or hashes personally identifiable information in the analytics data. Add configuration options for admins to adjust retention periods. Implement a privacy compliance report that shows what data is being collected and stored. Create a data purging API endpoint that allows for manual deletion of specific data points when needed for GDPR compliance.
+Build search results container to display server cards in a grid/list. Implement pagination controls with configurable items per page. Add sorting options (popularity, date, relevance). Create empty state for no results. Implement loading states during API calls. Add filter sidebar/modal for mobile. Ensure the page maintains search parameters in URL for sharing. Create error handling UI for failed searches.
+
+## 6. Develop server detail page [pending]
+### Dependencies: 6.4
+### Description: Create comprehensive server detail view showing README, metadata, and analytics
+### Details:
+Design layout for server detail page. Implement Markdown/HTML rendering for README content. Create metadata section displaying all server information. Add tabs or sections for different content types (overview, files, analytics). Implement related servers section. Add user interaction features (star, bookmark, share). Create mobile-responsive layout for the detail page. Add breadcrumb navigation for better UX.
+
+## 7. Implement API integration and error handling [pending]
+### Dependencies: 6.2, 6.5, 6.6
+### Description: Connect UI components to backend APIs and implement comprehensive error handling
+### Details:
+Create API service layer with Axios or fetch. Implement authentication token management. Connect search functionality to search API endpoints. Integrate server detail page with server data API. Add loading states for all API interactions. Implement comprehensive error handling with user-friendly messages. Add retry mechanisms for failed requests. Implement client-side caching for better performance. Create offline support for critical features.
 

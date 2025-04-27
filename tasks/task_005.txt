@@ -1,88 +1,49 @@
 # Task ID: 5
-# Title: Build Web UI for Search and Browse
+# Title: Implement vector search with Pinecone
 # Status: pending
-# Dependencies: 4
+# Dependencies: 3, 4
 # Priority: medium
-# Description: Develop a React-based web interface for searching, browsing, and installing MCP servers.
+# Description: Set up RAG-driven semantic search over manifests and READMEs using Pinecone vector database.
 # Details:
-1. Set up React project with Tailwind CSS
-2. Create components for:
-   - Search bar with type-ahead suggestions
-   - Filter controls (tags, version, sort options)
-   - Server card displaying metadata
-   - Detail view/modal showing full README
-   - Install button and confirmation
-3. Implement search functionality with debouncing
-4. Add responsive design for mobile and desktop
-5. Implement client-side caching
-6. Add loading states and error handling
-7. Implement analytics tracking for user interactions
-8. Create install flow with code snippet generation
+Set up Pinecone client and configuration. Create service to convert manifest and README text into embeddings. Implement batch indexing for initial data load. Create real-time indexing for new or updated servers. Build search API with natural language query support. Implement filtering by tags, version, recency, and popularity. Create ranking algorithm combining semantic similarity and install count. Add pagination and result limiting.
 
 # Test Strategy:
-1. Component unit tests with React Testing Library
-2. Integration tests for search and filter functionality
-3. User testing for UI/UX feedback
-4. Cross-browser compatibility testing
-5. Accessibility testing (WCAG compliance)
+Unit tests for embedding generation and search service. Integration tests with Pinecone test instance. Performance tests for search latency. Verify search result quality with predefined queries.
 
 # Subtasks:
-## 1. Set up React project with component structure [pending]
+## 1. Set up Pinecone client and configuration [pending]
 ### Dependencies: None
-### Description: Initialize React project with Tailwind CSS and create the basic component architecture for the search and browse interface
+### Description: Initialize the Pinecone client with proper configuration and create the vector index for storing embeddings
 ### Details:
-1. Create a new React project using Create React App or Vite
-2. Install and configure Tailwind CSS
-3. Set up folder structure (components, hooks, utils, etc.)
-4. Create skeleton components for main layout, search bar, filter controls, server card, and detail view
-5. Implement basic routing between main views
-6. Set up state management approach (Context API or Redux)
+Create a service that initializes the Pinecone client with API keys from environment variables. Configure the vector dimensions (e.g., 768 or 1536 depending on the embedding model). Set up proper error handling and connection pooling. Create a vector index with appropriate settings for similarity metric (cosine, dot product, or euclidean) and metadata filtering capabilities. Include configuration for dev/prod environments.
 
-## 2. Implement search and filter functionality [pending]
+## 2. Implement embedding generation service [pending]
 ### Dependencies: 5.1
-### Description: Build the search bar with type-ahead suggestions and implement filter controls for refining search results
+### Description: Create a service to convert manifest and README text into vector embeddings
 ### Details:
-1. Create search bar component with input field and suggestion dropdown
-2. Implement debounced search functionality to prevent excessive API calls
-3. Build filter components for tags, versions, and other metadata
-4. Create sort controls (popularity, date, etc.)
-5. Implement client-side filtering logic
-6. Add loading states during search operations
-7. Handle empty states and error scenarios
+Implement a service that takes text from manifests and READMEs and converts it into vector embeddings. Use an appropriate embedding model (e.g., OpenAI's text-embedding-ada-002 or an open-source alternative). Handle text chunking for long documents with appropriate overlap. Implement caching to avoid regenerating embeddings for unchanged content. Create utility functions for text preprocessing (removing markdown syntax, code blocks handling, etc.).
 
-## 3. Develop server listing and detail views [pending]
-### Dependencies: 5.1
-### Description: Create the server card components for the browse view and detailed server information modal/page
+## 3. Implement batch indexing for initial data load [pending]
+### Dependencies: 5.1, 5.2
+### Description: Create a batch process to index all existing manifests and READMEs
 ### Details:
-1. Design and implement server card component showing key metadata (name, description, tags, popularity)
-2. Create grid/list layout for displaying multiple server cards
-3. Implement pagination or infinite scroll for browsing many results
-4. Build detailed server view showing full README content
-5. Add syntax highlighting for code blocks in README
-6. Implement responsive design for both card and detail views
-7. Add animations for transitions between views
+Develop a batch indexing process that retrieves all existing manifests and READMEs, generates embeddings for them, and uploads them to Pinecone in batches. Implement progress tracking and error handling with retry logic. Optimize for performance with parallel processing where appropriate. Store metadata with each vector including server ID, version, tags, install count, and last updated timestamp. Create a command-line interface to trigger reindexing when needed.
 
-## 4. Build installation flow with code snippet generation [pending]
-### Dependencies: 5.3
-### Description: Create the installation process UI with generated code snippets for users to copy
+## 4. Implement real-time indexing for new or updated content [pending]
+### Dependencies: 5.2, 5.3
+### Description: Create a service to automatically index new or updated manifests and READMEs
 ### Details:
-1. Design and implement install button on server cards and detail view
-2. Create installation confirmation modal with options
-3. Implement code snippet generation based on selected options
-4. Add copy-to-clipboard functionality for code snippets
-5. Create visual feedback for successful copy operations
-6. Implement installation tracking for analytics
-7. Add helpful tooltips and documentation links
+Implement event listeners or hooks that trigger when manifests or READMEs are created or updated. Create a service that generates embeddings for the new/updated content and upserts them into Pinecone. Implement deduplication logic to avoid duplicate entries. Add logging for indexing operations. Create a mechanism to handle deletions by removing corresponding vectors from the index.
 
-## 5. Implement performance optimizations and final polish [pending]
-### Dependencies: 5.2, 5.3, 5.4
-### Description: Add client-side caching, performance improvements, and final UI polish
+## 5. Build search API with natural language query support [pending]
+### Dependencies: 5.3, 5.4
+### Description: Create an API endpoint that accepts natural language queries and returns relevant results
 ### Details:
-1. Implement client-side caching of search results and server details
-2. Add analytics tracking for key user interactions
-3. Optimize component rendering with React.memo or useMemo where appropriate
-4. Implement skeleton loaders for improved perceived performance
-5. Add error boundary components to prevent UI crashes
-6. Conduct cross-browser testing and fix any compatibility issues
-7. Perform accessibility audit and implement necessary improvements
+Implement a REST API endpoint that accepts natural language queries. Convert queries to embeddings using the same embedding model. Query the Pinecone index with the embedding to find semantically similar content. Implement filtering capabilities by tags, version, recency, and popularity using Pinecone's metadata filtering. Create a ranking algorithm that combines semantic similarity scores with install count/popularity. Add pagination support with customizable page size. Include result limiting options.
+
+## 6. Implement search results enhancement and testing [pending]
+### Dependencies: 5.5
+### Description: Enhance search results with additional metadata and implement comprehensive testing
+### Details:
+Enrich search results with additional metadata from the original documents. Implement result highlighting to show where matches occurred. Create a comprehensive test suite with unit tests for each component and integration tests for the entire search pipeline. Develop a set of benchmark queries to evaluate search quality. Implement monitoring for search performance and relevance. Create documentation for the search API including examples and best practices.
 

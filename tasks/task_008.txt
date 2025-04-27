@@ -1,60 +1,55 @@
 # Task ID: 8
-# Title: Develop Cursor and Windsurf IDE Integrations
+# Title: Develop IDE plugins
 # Status: pending
-# Dependencies: 4, 7
+# Dependencies: 5, 6
 # Priority: medium
-# Description: Create integrations for Cursor and Windsurf IDEs to provide similar functionality as the VS Code extension.
+# Description: Build extensions for VS Code, Cursor, and Windsurf that enable searching, installing, and opening MCP servers.
 # Details:
-1. Research Cursor and Windsurf SDK/API capabilities
-2. Implement pane UI for each IDE following their design patterns
-3. Reuse core search and install logic from VS Code extension
-4. Adapt the UI to match each IDE's style guidelines
-5. Implement IDE-specific features as needed
-6. Create consistent user experience across all IDEs
-7. Add telemetry for usage tracking
-8. Test compatibility with different IDE versions
+Create VS Code extension with TypeScript. Implement mcp.search command with side panel results. Build mcp.install command to inject mcp.json in workspace. Create mcp.open-in-ide command for deep-linking. Implement similar functionality for Cursor and Windsurf. Create authentication flow for IDE plugins. Build common library for shared functionality across plugins. Implement deep link URI scheme handlers according to Appendix B.
 
 # Test Strategy:
-1. Manual testing in each IDE
-2. Verify feature parity with VS Code extension
-3. Test installation flow in each IDE
-4. Collect user feedback from early adopters
-5. Test with different project types and configurations
+Unit tests for plugin commands. Integration tests with mock IDE environments. End-to-end tests for complete workflows. User testing with different IDEs. Verify deep-link functionality across platforms.
 
 # Subtasks:
-## 1. Research and document Cursor and Windsurf IDE extension APIs [pending]
+## 1. Create shared library for IDE plugins [pending]
 ### Dependencies: None
-### Description: Investigate the extension development capabilities of both Cursor and Windsurf IDEs, documenting their APIs, extension points, and limitations compared to VS Code.
+### Description: Develop a common TypeScript library that will be used across all IDE plugins to avoid code duplication and ensure consistent functionality.
 ### Details:
-Create a comprehensive document covering: extension initialization process, UI component APIs, command registration, settings management, and extension packaging for both IDEs. Identify which VS Code extension APIs have direct equivalents and which will require custom implementations. Document any IDE-specific features that could enhance the integration. Include code snippets showing basic extension structure for each IDE.
+Build a TypeScript library that handles: API communication with MCP servers, authentication token management, search result formatting, and installation utilities. Export interfaces for search results, server configurations, and authentication responses. Implement utility functions for validating server configurations and formatting search results. Package as an npm module that can be imported by each IDE plugin.
 
-## 2. Create core architecture for cross-IDE compatibility [pending]
+## 2. Implement authentication flow module [pending]
 ### Dependencies: 8.1
-### Description: Design and implement a modular architecture that allows sharing core functionality while accommodating IDE-specific implementations.
+### Description: Create a reusable authentication module that handles user login, token storage, and refresh mechanisms for all IDE plugins.
 ### Details:
-Develop an abstraction layer that separates the core search and install logic from IDE-specific UI implementations. Create interface definitions for UI components, commands, and settings that each IDE implementation will need to fulfill. Refactor the existing VS Code extension to fit this new architecture. Implement a factory pattern to instantiate the appropriate implementation based on the detected IDE. Document the architecture with diagrams showing the component relationships and data flow.
+Using the shared library, implement OAuth2 authentication flow. Create functions to initiate login, handle callbacks, securely store tokens in IDE-specific secure storage, refresh expired tokens, and handle logout. Implement appropriate error handling for authentication failures. Design the module to work with VS Code's SecretStorage, and equivalent mechanisms in Cursor and Windsurf.
 
-## 3. Implement Cursor IDE integration [pending]
-### Dependencies: 8.2
-### Description: Build the extension for Cursor IDE using their extension API and following their design patterns.
+## 3. Develop VS Code extension core functionality [pending]
+### Dependencies: 8.1, 8.2
+### Description: Create the foundation for the VS Code extension with the three main commands: search, install, and open.
 ### Details:
-Implement the UI components for Cursor IDE, including the search pane, results display, and package details view. Adapt the VS Code extension's styling to match Cursor's design guidelines. Register commands and keyboard shortcuts according to Cursor's conventions. Implement Cursor-specific features identified during research. Create the extension manifest and packaging configuration for Cursor. Test the implementation on multiple versions of Cursor IDE.
+Initialize VS Code extension project with TypeScript. Register the three commands: mcp.search, mcp.install, and mcp.open-in-ide. Implement mcp.search to display results in a WebView panel with proper formatting and pagination. Build mcp.install to inject mcp.json into the current workspace with proper error handling. Create mcp.open-in-ide to handle deep-linking according to Appendix B specifications. Add appropriate context menu integration points.
 
-## 4. Implement Windsurf IDE integration [pending]
-### Dependencies: 8.2
-### Description: Build the extension for Windsurf IDE using their extension API and following their design patterns.
+## 4. Implement Cursor IDE plugin [pending]
+### Dependencies: 8.1, 8.2, 8.3
+### Description: Adapt the VS Code extension to work with Cursor IDE, accounting for any API differences.
 ### Details:
-Implement the UI components for Windsurf IDE, including the search pane, results display, and package details view. Adapt the VS Code extension's styling to match Windsurf's design guidelines. Register commands and keyboard shortcuts according to Windsurf's conventions. Implement Windsurf-specific features identified during research. Create the extension manifest and packaging configuration for Windsurf. Test the implementation on multiple versions of Windsurf IDE.
+Fork the VS Code extension codebase for Cursor compatibility. Identify and modify VS Code-specific APIs that differ in Cursor. Test and ensure the three main commands work properly in Cursor. Update authentication flow if needed for Cursor-specific requirements. Package the extension according to Cursor's distribution guidelines.
 
-## 5. Implement cross-IDE telemetry and analytics [pending]
-### Dependencies: 8.3, 8.4
-### Description: Create a unified telemetry system that works across all IDE integrations while respecting each platform's privacy guidelines.
+## 5. Implement Windsurf IDE plugin [pending]
+### Dependencies: 8.1, 8.2
+### Description: Create the Windsurf extension with equivalent functionality to the VS Code and Cursor plugins.
 ### Details:
-Design a telemetry data model that captures important usage metrics (searches, installations, errors) consistently across all IDEs. Implement IDE-specific telemetry adapters that conform to each platform's best practices. Add telemetry collection points throughout the shared codebase. Create a dashboard for visualizing usage across different IDEs. Ensure all telemetry collection includes appropriate opt-out mechanisms and complies with privacy regulations. Document what data is collected and how it's used.
+Research Windsurf extension API and development patterns. Implement the three core commands using the shared library components. Create Windsurf-specific UI components for search results display. Adapt the authentication flow for Windsurf's security model. Package the extension according to Windsurf's distribution requirements.
 
-## 6. Perform cross-IDE testing and release preparation [pending]
+## 6. Implement deep link URI scheme handlers [pending]
 ### Dependencies: 8.3, 8.4, 8.5
-### Description: Conduct comprehensive testing across all IDE platforms and prepare for coordinated release.
+### Description: Create URI scheme handlers for all three IDE plugins to enable deep linking from external applications.
 ### Details:
-Create a test plan covering all features across the three IDE platforms. Implement automated tests where possible. Conduct manual testing on different OS platforms and IDE versions. Create unified documentation that highlights any platform-specific differences. Prepare release packages for each IDE's extension marketplace. Create release notes and update documentation. Implement a coordinated release strategy to launch all extensions within the same timeframe. Set up monitoring for post-release issues.
+Implement URI scheme handlers according to Appendix B specifications. Register custom URI protocols for each IDE (vscode://mcp/, cursor://mcp/, windsurf://mcp/). Create handlers for different URI patterns including server opening, search queries, and specific resource access. Test deep linking from browsers and other applications. Ensure proper error handling for malformed URIs.
+
+## 7. Create comprehensive documentation and publish extensions [pending]
+### Dependencies: 8.3, 8.4, 8.5, 8.6
+### Description: Document all plugin features, prepare for marketplace publication, and create user guides for all three IDE plugins.
+### Details:
+Create README files with installation and usage instructions for each plugin. Document all commands, keyboard shortcuts, and configuration options. Create sample screenshots and usage examples. Prepare marketplace listings with appropriate metadata, tags, and descriptions. Submit extensions to VS Code Marketplace, Cursor Extension Store, and Windsurf Plugin Repository. Create a developer guide for maintaining and extending the plugins.
 

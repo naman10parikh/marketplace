@@ -2,614 +2,716 @@
   "tasks": [
     {
       "id": 1,
-      "title": "Set up GitHub Webhook Integration",
-      "description": "Create a service to ingest data from the 'awesome-mcp-servers' GitHub repository in real-time using webhooks.",
+      "title": "Set up project infrastructure and base architecture",
+      "description": "Initialize the project structure, configure development environment, and set up the foundational architecture for the MCP Server Marketplace.",
       "status": "pending",
       "dependencies": [],
       "priority": "high",
-      "details": "Implement a Node.js + Express service that:\n1. Registers webhooks with the GitHub repository\n2. Authenticates incoming webhook requests using GitHub secrets\n3. Processes repository events (commits, PRs, etc.)\n4. Extracts server metadata (name, description, version, tags) from manifests\n5. Parses README content for RAG indexing\n6. Stores the data in a structured format\n7. Implements a nightly full sync job as a fallback\n\nThe service should handle webhook payload validation, error handling, and logging.",
-      "testStrategy": "1. Mock GitHub webhook payloads to test event handling\n2. Verify correct extraction of metadata from sample manifests\n3. Test authentication mechanism with valid and invalid secrets\n4. Validate the nightly sync process with a test repository\n5. Measure performance under load with simulated webhook events",
+      "details": "Create a Node.js/Express project with TypeScript. Set up the directory structure following best practices (routes, controllers, services, models). Configure ESLint, Prettier, and testing framework (Jest). Initialize Git repository with CI/CD pipeline configuration. Set up Docker for local development. Create configuration files for different environments (dev, test, prod). Implement basic error handling middleware and logging.",
+      "testStrategy": "Verify project structure and configuration. Run linting and basic tests to ensure the setup is working correctly. Test the CI/CD pipeline with a simple build.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Set up Express server with webhook endpoint",
-          "description": "Create the foundation of the webhook service with a basic Express server that can receive webhook requests from GitHub",
+          "title": "Initialize Node.js/Express project with TypeScript",
+          "description": "Set up the base Node.js project with Express framework and TypeScript configuration",
           "status": "pending",
           "dependencies": [],
-          "details": "Implement a Node.js Express application with the following components: 1) Basic server setup with proper error handling, 2) A dedicated endpoint (e.g., '/webhook') to receive GitHub webhook payloads, 3) Request parsing middleware for JSON payloads, 4) Basic logging infrastructure using Winston or similar, 5) Environment configuration for development and production environments, 6) Initial project structure following best practices."
+          "details": "Create a new directory for the project. Initialize npm with 'npm init'. Install core dependencies: express, typescript, ts-node, @types/node, @types/express. Create tsconfig.json with appropriate compiler options (target: es6, module: commonjs, outDir: dist, rootDir: src, strict: true). Create a basic server.ts file with Express initialization. Set up npm scripts for development and building (start, build, dev)."
         },
         {
           "id": 2,
-          "title": "Implement GitHub webhook authentication",
-          "description": "Add security to the webhook endpoint by implementing GitHub's signature verification to ensure requests are legitimate",
+          "title": "Establish project directory structure and Git repository",
+          "description": "Create the directory structure following best practices and initialize Git with proper configuration",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "Extend the webhook endpoint to: 1) Extract the 'X-Hub-Signature-256' header from incoming requests, 2) Retrieve the webhook secret from environment variables, 3) Compute the HMAC SHA-256 signature of the request body using the secret, 4) Compare the computed signature with the one in the header, 5) Reject requests with invalid signatures, 6) Add comprehensive error handling for authentication failures with appropriate HTTP responses and logging."
+          "details": "Create the following directory structure: src/{routes, controllers, services, models, middleware, utils, config}. Add README.md with project overview. Initialize Git repository with 'git init'. Create .gitignore file (include node_modules, dist, .env files, logs). Create initial commit with base structure. Set up GitHub/GitLab repository and push initial commit. Create development branch for ongoing work."
         },
         {
           "id": 3,
-          "title": "Process GitHub events and extract repository data",
-          "description": "Implement handlers for relevant GitHub webhook events to extract and process server metadata from the repository",
+          "title": "Configure code quality tools and testing framework",
+          "description": "Set up ESLint, Prettier, and Jest for code quality and testing",
           "status": "pending",
           "dependencies": [
             2
           ],
-          "details": "Create event handlers for: 1) 'push' events to detect changes to manifest files and README, 2) 'pull_request' events for merged PRs that modify relevant files, 3) Parse manifest files to extract server metadata (name, description, version, tags), 4) Extract and process README content for RAG indexing, 5) Implement a structured data model for storing the extracted information, 6) Add validation for the extracted data to ensure consistency."
+          "details": "Install ESLint, Prettier and related dependencies. Create .eslintrc.js with TypeScript configuration. Create .prettierrc with team's code style preferences. Set up lint and format npm scripts. Install Jest, ts-jest, @types/jest, and supertest for API testing. Configure Jest in jest.config.js for TypeScript support. Create a basic test file to verify the setup. Add test and test:watch npm scripts."
         },
         {
           "id": 4,
-          "title": "Implement data storage and persistence layer",
-          "description": "Create a data storage mechanism to persist the extracted server metadata and README content",
+          "title": "Implement environment configuration system",
+          "description": "Create configuration files for different environments and implement a configuration management system",
           "status": "pending",
           "dependencies": [
-            3
+            2
           ],
-          "details": "Implement a persistence layer that: 1) Defines a schema for storing server metadata and content, 2) Creates an abstraction layer for data operations (create, read, update, delete), 3) Implements transaction support for atomic operations, 4) Handles data versioning to track changes over time, 5) Provides query capabilities to retrieve server information, 6) Includes error handling and retry mechanisms for data operations."
+          "details": "Install dotenv package. Create .env.example file with required variables. Create src/config/index.ts to load and validate environment variables. Implement configuration objects for different environments (development, test, production). Add environment-specific validation rules. Create a configuration service that provides access to the current environment configuration. Document required environment variables in README.md."
         },
         {
           "id": 5,
-          "title": "Develop nightly full sync job and webhook registration",
-          "description": "Create a fallback synchronization mechanism and automate the webhook registration process",
+          "title": "Set up Docker for local development",
+          "description": "Create Docker and Docker Compose configuration for local development environment",
           "status": "pending",
           "dependencies": [
             4
           ],
-          "details": "Implement: 1) A scheduled job using cron or similar to perform a full repository sync nightly, 2) GitHub API integration to programmatically register webhooks with the repository, 3) Comparison logic to detect differences between webhook data and full sync data, 4) Reconciliation process to resolve any discrepancies, 5) Monitoring and alerting for sync failures, 6) Documentation for the entire webhook service including setup instructions and operational procedures."
+          "details": "Create Dockerfile for the application with appropriate Node.js base image. Set up multi-stage build process for development and production. Create docker-compose.yml with application service and any required dependencies (database, cache, etc.). Configure volume mapping for hot-reloading in development. Set up environment variable passing from .env to containers. Add Docker-specific npm scripts (docker:build, docker:up, docker:down). Document Docker usage in README.md."
+        },
+        {
+          "id": 6,
+          "title": "Implement error handling and logging middleware",
+          "description": "Create middleware for consistent error handling and logging throughout the application",
+          "status": "pending",
+          "dependencies": [
+            1,
+            4
+          ],
+          "details": "Install logging library (winston or pino). Create src/middleware/logger.ts for application logging. Implement different log levels based on environment. Create src/middleware/errorHandler.ts for centralized error handling. Implement custom error classes in src/utils/errors.ts. Create middleware for catching async errors. Implement request ID tracking for request tracing. Add middleware to the Express application in server.ts. Create basic health check endpoint at /health."
         }
       ]
     },
     {
       "id": 2,
-      "title": "Implement Data Storage Layer",
-      "description": "Create a database schema and API for storing and retrieving MCP server metadata.",
+      "title": "Implement authentication and user management",
+      "description": "Build the authentication system with signup, login, and session management using JWT and secure cookies.",
       "status": "pending",
       "dependencies": [
         1
       ],
       "priority": "high",
-      "details": "1. Set up a PostgreSQL database with the schema matching the data model in the PRD\n2. Create tables for servers with fields for name, description, version, tags, repo_url, readme, last_updated, and install_count\n3. Implement data access layer with CRUD operations\n4. Add indexing for efficient querying by various fields\n5. Implement versioning to track changes to server metadata\n6. Create API endpoints for:\n   - Getting all servers\n   - Getting a specific server by ID\n   - Updating server metadata\n   - Incrementing install count\n7. Add validation for incoming data\n8. Implement error handling and transaction management",
-      "testStrategy": "1. Unit tests for CRUD operations\n2. Integration tests with test database\n3. Performance testing for read/write operations\n4. Validate schema constraints and indexing\n5. Test concurrent updates to install_count",
+      "details": "Create user model with email, password hash, and role fields. Implement /signup endpoint with email verification. Build /login endpoint that returns JWT in HTTP-only secure cookies. Create /logout endpoint to invalidate sessions. Implement /me endpoint to get current user info. Add middleware for route protection based on authentication and roles. Set up password reset flow. Implement proper error handling for auth failures.",
+      "testStrategy": "Unit tests for user model and auth services. Integration tests for signup, login, and logout flows. Security tests for JWT implementation and cookie settings. Test role-based access control.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Set up PostgreSQL database schema",
-          "description": "Create the database schema with tables for server metadata according to the PRD data model",
+          "title": "Create User Model and Database Schema",
+          "description": "Define the user data model with required fields and create the database schema",
           "status": "pending",
           "dependencies": [],
-          "details": "1. Initialize PostgreSQL database\n2. Create 'servers' table with fields: id, name, description, version, tags (array), repo_url, readme (text), last_updated (timestamp), install_count (integer)\n3. Create 'server_versions' table to track metadata changes with fields: server_id, version_number, changed_fields, timestamp, changed_by\n4. Set up appropriate primary keys, foreign keys, and constraints\n5. Add indexes on frequently queried fields: name, tags, version, last_updated\n6. Document the schema with comments"
+          "details": "Create a User model with fields: id (primary key), email (unique), passwordHash, role (enum: user, admin), emailVerified (boolean), verificationToken (nullable), resetPasswordToken (nullable), resetPasswordExpiry (nullable), createdAt, and updatedAt. Set up database migrations. Implement password hashing using bcrypt with appropriate salt rounds. Add validation for email format and password strength."
         },
         {
           "id": 2,
-          "title": "Implement data access layer",
-          "description": "Create a data access layer with CRUD operations and transaction management",
+          "title": "Implement Signup Endpoint with Email Verification",
+          "description": "Create the user registration endpoint with email verification functionality",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "1. Create a database connection manager with connection pooling\n2. Implement base CRUD operations for servers table:\n   - createServer(serverData)\n   - getServerById(id)\n   - updateServer(id, serverData)\n   - deleteServer(id)\n   - getAllServers(filters, pagination)\n3. Implement versioning logic to track changes in server_versions table\n4. Add transaction management to ensure data consistency\n5. Implement error handling with appropriate error types\n6. Write unit tests for the data access layer"
+          "details": "Build POST /auth/signup endpoint that accepts email and password. Validate input, check for existing users, hash password, and store new user with emailVerified=false. Generate a verification token (JWT or UUID) and store it with the user. Integrate with email service to send verification email containing a link with the token. Create GET /auth/verify endpoint that validates the token and sets emailVerified=true. Add proper error handling for duplicate emails and validation failures."
         },
         {
           "id": 3,
-          "title": "Create API endpoints for server metadata",
-          "description": "Develop REST API endpoints for interacting with server metadata",
+          "title": "Implement Login Endpoint with JWT",
+          "description": "Create the login endpoint that authenticates users and issues JWT tokens",
           "status": "pending",
           "dependencies": [
-            2
+            1
           ],
-          "details": "1. Create the following API endpoints:\n   - GET /servers - List all servers with filtering and pagination\n   - GET /servers/:id - Get a specific server by ID\n   - POST /servers - Create a new server\n   - PUT /servers/:id - Update server metadata\n   - PATCH /servers/:id/install_count - Increment install count\n2. Implement request validation using a schema validation library\n3. Add proper error responses with appropriate HTTP status codes\n4. Implement query parameter handling for filtering and pagination\n5. Add API documentation using OpenAPI/Swagger"
+          "details": "Build POST /auth/login endpoint that accepts email and password. Verify credentials by comparing password hash. Check if email is verified. Generate JWT containing userId and role with appropriate expiration (15-60 minutes). Set JWT in HTTP-only, secure, SameSite=Strict cookie. Implement CSRF protection with double-submit pattern or separate CSRF token. Return user data (excluding sensitive fields) in response. Add rate limiting to prevent brute force attacks."
         },
         {
           "id": 4,
-          "title": "Implement advanced querying and optimization",
-          "description": "Add advanced querying capabilities and optimize database performance",
+          "title": "Implement Logout and Session Management",
+          "description": "Create logout functionality and handle session management",
           "status": "pending",
           "dependencies": [
-            2,
             3
           ],
-          "details": "1. Implement full-text search for server descriptions and readme content\n2. Add advanced filtering by multiple tags, version ranges, and update dates\n3. Optimize query performance with additional indexes based on common query patterns\n4. Implement caching for frequently accessed data\n5. Add database migration scripts for future schema updates\n6. Create performance tests to ensure efficient querying\n7. Document query patterns and optimization strategies"
+          "details": "Build POST /auth/logout endpoint that clears the auth cookie. Consider implementing a token blacklist using Redis for immediate invalidation of active tokens. Add refresh token functionality with longer expiration to automatically renew JWTs. Store refresh tokens in database with user association. Create POST /auth/refresh endpoint to issue new JWTs using refresh tokens. Implement token rotation for security."
+        },
+        {
+          "id": 5,
+          "title": "Create Authentication Middleware",
+          "description": "Implement middleware for route protection based on authentication and roles",
+          "status": "pending",
+          "dependencies": [
+            3
+          ],
+          "details": "Create isAuthenticated middleware that verifies JWT from cookies, handles token expiration, and attaches user to request object. Implement requireRole middleware that checks user's role against required roles for the route. Build error handling for unauthorized access with appropriate HTTP status codes (401 for unauthenticated, 403 for unauthorized). Add middleware to refresh tokens automatically when close to expiration. Test middleware with protected routes."
+        },
+        {
+          "id": 6,
+          "title": "Implement User Profile Management",
+          "description": "Create endpoints for retrieving and updating user information",
+          "status": "pending",
+          "dependencies": [
+            5
+          ],
+          "details": "Build GET /auth/me endpoint protected by isAuthenticated middleware to return current user data. Implement PATCH /auth/me for updating profile information (name, email, etc.). Add validation for profile updates. Create endpoints for changing password that requires current password verification. Implement proper error handling for all user operations. Ensure sensitive data like password hash is never returned in responses."
+        },
+        {
+          "id": 7,
+          "title": "Implement Password Reset Flow",
+          "description": "Create the forgot password and reset password functionality",
+          "status": "pending",
+          "dependencies": [
+            1,
+            3
+          ],
+          "details": "Build POST /auth/forgot-password endpoint that accepts email, validates user exists, generates a time-limited reset token (expires in 1 hour), and sends reset email. Create POST /auth/reset-password endpoint that verifies the reset token, accepts new password, validates password strength, updates the password hash, and invalidates the reset token. Implement security measures like rate limiting and IP logging for password reset attempts. Add comprehensive error handling with user-friendly messages that don't leak information."
         }
       ]
     },
     {
       "id": 3,
-      "title": "Set up Pinecone Vector Database for RAG Search",
-      "description": "Implement vector embeddings and Pinecone integration for semantic search capabilities.",
+      "title": "Create data models and database setup",
+      "description": "Design and implement the database schema for users, servers, events, and surveys as specified in the PRD.",
       "status": "pending",
       "dependencies": [
-        2
+        1
       ],
       "priority": "high",
-      "details": "1. Set up a Pinecone account and create an index with appropriate dimensions\n2. Implement a service to generate embeddings from server README content and metadata\n3. Create a batch process to index all existing servers\n4. Implement real-time indexing for new/updated servers\n5. Create a search service that:\n   - Converts search queries to embeddings\n   - Performs vector similarity search in Pinecone\n   - Combines results with metadata filters (tags, version)\n   - Ranks results by semantic similarity and install_count\n6. Implement caching for frequent queries\n7. Add monitoring for index health and query performance",
-      "testStrategy": "1. Verify embedding quality with sample README content\n2. Test search relevance with various query types\n3. Benchmark search latency (target < 300ms)\n4. Test filtering and sorting functionality\n5. Validate index updates when server metadata changes",
+      "details": "Set up Postgres database with proper schemas. Create models for users, servers, events, and surveys following the data model in section 7. Implement database migrations for schema changes. Set up database connection pooling and error handling. Create data access layer with repositories/services for each model. Implement basic CRUD operations for all entities. Add indexes for frequently queried fields.",
+      "testStrategy": "Unit tests for models and repositories. Integration tests with test database. Performance tests for common queries. Verify data integrity constraints and relationships.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Set up Pinecone account and index configuration",
-          "description": "Create a Pinecone account, set up API access, and configure an index with appropriate dimensions for the embedding model",
+          "title": "Design database schema and entity relationships",
+          "description": "Create comprehensive database schema diagrams for users, servers, events, and surveys based on section 7 of the PRD.",
           "status": "pending",
           "dependencies": [],
-          "details": "1. Sign up for a Pinecone account\n2. Create an API key with appropriate permissions\n3. Select an embedding model (e.g., OpenAI's text-embedding-ada-002 with 1536 dimensions)\n4. Create a Pinecone index with matching dimensions\n5. Configure the index with appropriate metric (cosine similarity)\n6. Store credentials securely in environment variables\n7. Create a configuration module to manage Pinecone connection settings"
+          "details": "Create entity-relationship diagrams (ERDs) showing all tables, columns, data types, primary/foreign keys, and relationships between entities. Define constraints, indexes, and normalization approach. Document schema decisions including handling of user roles, server memberships, event scheduling, and survey responses. Prepare for review before implementation."
         },
         {
           "id": 2,
-          "title": "Implement embedding generation service",
-          "description": "Create a service that converts server README content and metadata into vector embeddings",
+          "title": "Set up Postgres database and connection configuration",
+          "description": "Initialize Postgres database instance and configure connection settings with proper security and performance parameters.",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "1. Implement a text preprocessing function to clean and normalize README content\n2. Create a function to chunk large README files into appropriate sizes\n3. Integrate with an embedding model API (e.g., OpenAI, Hugging Face)\n4. Implement error handling and retry logic for embedding generation\n5. Create a function to combine embeddings with server metadata\n6. Add logging for embedding generation process\n7. Implement rate limiting to avoid API throttling"
+          "details": "Create a new Postgres database instance. Configure environment variables for database credentials. Implement connection pooling with appropriate pool size settings. Set up error handling and connection retry logic. Create database users with proper permission scopes. Configure SSL for secure connections. Document connection string format and configuration options."
         },
         {
           "id": 3,
-          "title": "Develop batch indexing process for existing servers",
-          "description": "Create a batch process to generate embeddings and index all existing servers in Pinecone",
+          "title": "Implement database migration system",
+          "description": "Set up a migration framework to manage schema changes and version control for the database.",
           "status": "pending",
           "dependencies": [
-            1,
             2
           ],
-          "details": "1. Create a function to retrieve all existing servers from the database\n2. Implement a batch processing system with appropriate chunking\n3. Add progress tracking and reporting\n4. Implement error handling with failed item tracking\n5. Create a retry mechanism for failed items\n6. Add validation to ensure all servers are properly indexed\n7. Implement a command-line interface to trigger batch indexing"
+          "details": "Select and integrate a migration tool (like Flyway, Liquibase, or Knex). Create initial migration scripts for schema creation. Implement up/down migration capabilities. Set up migration versioning strategy. Create CI/CD integration for automated migrations. Document migration commands and procedures for development and production environments."
         },
         {
           "id": 4,
-          "title": "Implement real-time indexing for new/updated servers",
-          "description": "Create a system to automatically index new servers and update existing server embeddings when content changes",
+          "title": "Create data models and ORM mappings",
+          "description": "Implement data model classes for all entities with proper ORM mappings to the database tables.",
           "status": "pending",
           "dependencies": [
-            2,
             3
           ],
-          "details": "1. Implement event listeners for server creation and update events\n2. Create a function to determine if content has changed significantly enough to require re-indexing\n3. Implement a queue system for processing indexing requests\n4. Add logic to update existing vectors rather than creating duplicates\n5. Implement deletion of vectors when servers are removed\n6. Add error handling and notification for failed indexing\n7. Create a manual trigger to force re-indexing of specific servers"
+          "details": "Create model classes for users, servers, events, and surveys. Implement ORM mappings between models and database tables. Define relationships between models (one-to-many, many-to-many). Add validation rules and constraints. Implement type conversions and serialization methods. Create unit tests for model behavior. Document model properties and relationships."
         },
         {
           "id": 5,
-          "title": "Create vector search service with ranking",
-          "description": "Implement a search service that converts queries to embeddings, performs vector similarity search, and ranks results",
+          "title": "Implement repository layer for data access",
+          "description": "Create repository classes that provide data access methods for each entity type.",
           "status": "pending",
           "dependencies": [
-            3,
             4
           ],
-          "details": "1. Create a function to convert search queries to embeddings\n2. Implement Pinecone query interface with appropriate parameters\n3. Add support for metadata filtering (tags, version)\n4. Implement hybrid ranking that combines semantic similarity with install_count\n5. Create a scoring function to normalize and weight different ranking factors\n6. Add pagination support for search results\n7. Implement search result formatting and enrichment with additional metadata"
+          "details": "Create repository interfaces and implementations for each entity type. Implement CRUD operations (Create, Read, Update, Delete). Add specialized query methods for common access patterns. Implement transaction management. Add pagination support for list operations. Create proper error handling and logging. Write unit tests for repository methods. Document repository API and usage patterns."
         },
         {
           "id": 6,
-          "title": "Add caching, monitoring and performance optimization",
-          "description": "Implement caching for frequent queries and add monitoring for index health and query performance",
+          "title": "Optimize database performance with indexes and query tuning",
+          "description": "Add database indexes for frequently queried fields and optimize common query patterns.",
           "status": "pending",
           "dependencies": [
             5
           ],
-          "details": "1. Implement a caching layer for frequent queries using Redis or similar\n2. Create cache invalidation strategies based on index updates\n3. Add performance metrics collection for query latency\n4. Implement monitoring for index health (size, update frequency)\n5. Create dashboards for search performance and usage patterns\n6. Add alerting for performance degradation or errors\n7. Implement query optimization techniques based on performance data"
+          "details": "Identify frequently queried fields from application requirements. Create appropriate indexes for these fields. Implement composite indexes for multi-column queries. Add full-text search indexes if needed. Optimize join queries with proper indexes. Measure and document query performance. Create index maintenance strategy. Update migration scripts to include index creation. Document indexing strategy and performance considerations."
         }
       ]
     },
     {
       "id": 4,
-      "title": "Develop Core API Endpoints",
-      "description": "Create RESTful API endpoints for search, retrieval, and analytics functionality.",
+      "title": "Build data ingestion service",
+      "description": "Implement the service to ingest MCP server data from GitHub webhooks and user submissions.",
       "status": "pending",
       "dependencies": [
-        2,
         3
       ],
       "priority": "high",
-      "details": "1. Design and document API using OpenAPI specification\n2. Implement the following endpoints:\n   - GET /api/servers - List all servers with pagination and filtering\n   - GET /api/servers/:id - Get detailed info for a specific server\n   - GET /api/search - Search servers with query parameters for text, tags, etc.\n   - POST /api/servers/:id/install - Track installation event\n   - GET /api/tags - Get all available tags for filtering\n3. Implement proper error handling and status codes\n4. Add rate limiting and request validation\n5. Set up CORS for web and IDE clients\n6. Implement response caching where appropriate\n7. Add logging for API usage and errors",
-      "testStrategy": "1. Unit tests for each endpoint\n2. Integration tests with test database\n3. Load testing to verify performance under expected traffic\n4. Validate response formats against API spec\n5. Test error scenarios and edge cases",
+      "details": "Create GitHub webhook endpoint to receive repository updates. Implement webhook secret validation for security. Build service to fetch and parse manifest files and READMEs from repositories. Create nightly sync job to ensure data consistency. Implement queue system for processing ingestion tasks asynchronously. Add validation for manifest schema according to Appendix A. Create service to handle user submissions with validation and approval workflow.",
+      "testStrategy": "Unit tests for webhook handler and manifest parser. Integration tests with mock GitHub payloads. Test validation logic for manifests. Verify nightly sync job with test repositories.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Design API specification and implement server listing endpoints",
-          "description": "Create OpenAPI specification and implement the first set of endpoints for listing and retrieving server information",
+          "title": "Create GitHub webhook endpoint",
+          "description": "Implement the API endpoint to receive GitHub webhook events for repository updates",
           "status": "pending",
           "dependencies": [],
-          "details": "1. Design the complete API using OpenAPI 3.0 specification\n2. Document all endpoints, request/response schemas, and error codes\n3. Implement GET /api/servers endpoint with pagination (limit/offset parameters)\n4. Implement filtering capabilities (by status, tags, etc.)\n5. Implement GET /api/servers/:id endpoint for detailed server information\n6. Set up basic error handling structure for these endpoints\n7. Write unit tests for these endpoints"
+          "details": "Create a REST API endpoint that accepts POST requests from GitHub webhooks. The endpoint should parse the incoming payload to identify the repository and event type (push, release, etc.). Implement basic request validation to ensure the payload contains the required fields. Set up proper error handling and logging for debugging purposes. The endpoint should return appropriate HTTP status codes (200 for success, 400 for invalid requests)."
         },
         {
           "id": 2,
-          "title": "Implement search and tags endpoints",
-          "description": "Create the search functionality and tags retrieval endpoints",
+          "title": "Implement webhook security validation",
+          "description": "Add security validation for GitHub webhooks using webhook secrets",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "1. Implement GET /api/search endpoint with text search capabilities\n2. Add query parameters for filtering search results (tags, status, etc.)\n3. Implement GET /api/tags endpoint to retrieve all available tags\n4. Ensure search results are properly paginated\n5. Optimize search queries for performance\n6. Add appropriate error handling for search-specific issues\n7. Write unit tests for search and tags endpoints"
+          "details": "Enhance the webhook endpoint to validate the X-Hub-Signature header using the webhook secret. Store the webhook secret securely in environment variables or a secrets manager. Implement the HMAC-SHA256 signature verification algorithm to validate that requests are coming from GitHub. Reject requests with invalid signatures with a 401 Unauthorized response. Add detailed logging for security events including failed validation attempts."
         },
         {
           "id": 3,
-          "title": "Implement installation tracking and enhance error handling",
-          "description": "Add installation tracking endpoint and improve overall error handling",
+          "title": "Build queue system for asynchronous processing",
+          "description": "Implement a queue system to handle ingestion tasks asynchronously",
           "status": "pending",
           "dependencies": [
-            1,
             2
           ],
-          "details": "1. Implement POST /api/servers/:id/install endpoint to track installation events\n2. Store installation data with timestamps and client information\n3. Implement comprehensive error handling across all endpoints\n4. Add appropriate HTTP status codes for different error scenarios\n5. Create standardized error response format\n6. Implement request validation using a validation library\n7. Write unit tests for installation tracking and error scenarios"
+          "details": "Set up a message queue system (e.g., RabbitMQ, AWS SQS, or Redis) to handle ingestion tasks asynchronously. Create producer code that adds tasks to the queue when webhook events are received. Implement consumer workers that process tasks from the queue. Add retry logic for failed tasks with exponential backoff. Implement dead-letter queue for tasks that repeatedly fail. Include monitoring and alerting for queue health and processing delays."
         },
         {
           "id": 4,
-          "title": "Implement API security, performance, and observability features",
-          "description": "Add rate limiting, CORS, caching, and logging to the API",
+          "title": "Implement manifest and README fetching service",
+          "description": "Create service to fetch and parse manifest files and READMEs from GitHub repositories",
           "status": "pending",
           "dependencies": [
-            1,
-            2,
             3
           ],
-          "details": "1. Implement rate limiting for all API endpoints\n2. Configure different rate limits based on endpoint sensitivity\n3. Set up CORS to allow access from web and IDE clients\n4. Implement response caching for appropriate endpoints (GET /api/servers, GET /api/tags)\n5. Configure cache invalidation strategies\n6. Add comprehensive logging for all API requests\n7. Log errors with appropriate context for debugging\n8. Create monitoring endpoints for API health and usage statistics"
+          "details": "Implement a service that uses the GitHub API to fetch manifest files and READMEs from repositories. Use GitHub's content API to retrieve raw file content. Parse the manifest files according to the expected format. Extract relevant metadata from README files. Handle rate limiting from GitHub API by implementing appropriate backoff strategies. Cache repository data to minimize API calls. Implement error handling for missing files or invalid content."
+        },
+        {
+          "id": 5,
+          "title": "Add manifest schema validation",
+          "description": "Implement validation for manifest schema according to Appendix A",
+          "status": "pending",
+          "dependencies": [
+            4
+          ],
+          "details": "Create a schema validator for manifest files based on the specifications in Appendix A. Use a schema validation library (like JSON Schema) to define and enforce the manifest structure. Implement custom validation rules for fields with specific requirements. Create detailed error messages for validation failures to help users correct their manifests. Add unit tests for the validator with both valid and invalid manifest examples. Document the schema requirements for developers."
+        },
+        {
+          "id": 6,
+          "title": "Create user submission service",
+          "description": "Build service to handle user submissions with validation and approval workflow",
+          "status": "pending",
+          "dependencies": [
+            5
+          ],
+          "details": "Implement a service for users to submit new MCP server data. Create API endpoints for submission, status checking, and updates. Reuse the manifest validator from subtask 5 to validate submissions. Implement an approval workflow with states (submitted, under review, approved, rejected). Create an admin interface for reviewing and approving submissions. Send notifications to users about submission status changes. Store submission history and audit logs for compliance purposes."
+        },
+        {
+          "id": 7,
+          "title": "Implement nightly sync job",
+          "description": "Create a scheduled job to ensure data consistency by syncing with GitHub repositories",
+          "status": "pending",
+          "dependencies": [
+            4,
+            5
+          ],
+          "details": "Develop a scheduled job that runs nightly to sync all tracked repositories. Implement logic to detect and process changes since the last sync. Reuse the manifest fetching and validation services from previous subtasks. Add comprehensive logging for sync operations. Implement error handling and alerting for sync failures. Create a dashboard to monitor sync status and history. Ensure the job can be manually triggered for immediate syncing when needed. Add configuration options for sync frequency and depth."
         }
       ]
     },
     {
       "id": 5,
-      "title": "Build Web UI for Search and Browse",
-      "description": "Develop a React-based web interface for searching, browsing, and installing MCP servers.",
+      "title": "Implement vector search with Pinecone",
+      "description": "Set up RAG-driven semantic search over manifests and READMEs using Pinecone vector database.",
       "status": "pending",
       "dependencies": [
+        3,
         4
       ],
       "priority": "medium",
-      "details": "1. Set up React project with Tailwind CSS\n2. Create components for:\n   - Search bar with type-ahead suggestions\n   - Filter controls (tags, version, sort options)\n   - Server card displaying metadata\n   - Detail view/modal showing full README\n   - Install button and confirmation\n3. Implement search functionality with debouncing\n4. Add responsive design for mobile and desktop\n5. Implement client-side caching\n6. Add loading states and error handling\n7. Implement analytics tracking for user interactions\n8. Create install flow with code snippet generation",
-      "testStrategy": "1. Component unit tests with React Testing Library\n2. Integration tests for search and filter functionality\n3. User testing for UI/UX feedback\n4. Cross-browser compatibility testing\n5. Accessibility testing (WCAG compliance)",
+      "details": "Set up Pinecone client and configuration. Create service to convert manifest and README text into embeddings. Implement batch indexing for initial data load. Create real-time indexing for new or updated servers. Build search API with natural language query support. Implement filtering by tags, version, recency, and popularity. Create ranking algorithm combining semantic similarity and install count. Add pagination and result limiting.",
+      "testStrategy": "Unit tests for embedding generation and search service. Integration tests with Pinecone test instance. Performance tests for search latency. Verify search result quality with predefined queries.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Set up React project with component structure",
-          "description": "Initialize React project with Tailwind CSS and create the basic component architecture for the search and browse interface",
+          "title": "Set up Pinecone client and configuration",
+          "description": "Initialize the Pinecone client with proper configuration and create the vector index for storing embeddings",
           "status": "pending",
           "dependencies": [],
-          "details": "1. Create a new React project using Create React App or Vite\n2. Install and configure Tailwind CSS\n3. Set up folder structure (components, hooks, utils, etc.)\n4. Create skeleton components for main layout, search bar, filter controls, server card, and detail view\n5. Implement basic routing between main views\n6. Set up state management approach (Context API or Redux)"
+          "details": "Create a service that initializes the Pinecone client with API keys from environment variables. Configure the vector dimensions (e.g., 768 or 1536 depending on the embedding model). Set up proper error handling and connection pooling. Create a vector index with appropriate settings for similarity metric (cosine, dot product, or euclidean) and metadata filtering capabilities. Include configuration for dev/prod environments."
         },
         {
           "id": 2,
-          "title": "Implement search and filter functionality",
-          "description": "Build the search bar with type-ahead suggestions and implement filter controls for refining search results",
+          "title": "Implement embedding generation service",
+          "description": "Create a service to convert manifest and README text into vector embeddings",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "1. Create search bar component with input field and suggestion dropdown\n2. Implement debounced search functionality to prevent excessive API calls\n3. Build filter components for tags, versions, and other metadata\n4. Create sort controls (popularity, date, etc.)\n5. Implement client-side filtering logic\n6. Add loading states during search operations\n7. Handle empty states and error scenarios"
+          "details": "Implement a service that takes text from manifests and READMEs and converts it into vector embeddings. Use an appropriate embedding model (e.g., OpenAI's text-embedding-ada-002 or an open-source alternative). Handle text chunking for long documents with appropriate overlap. Implement caching to avoid regenerating embeddings for unchanged content. Create utility functions for text preprocessing (removing markdown syntax, code blocks handling, etc.)."
         },
         {
           "id": 3,
-          "title": "Develop server listing and detail views",
-          "description": "Create the server card components for the browse view and detailed server information modal/page",
+          "title": "Implement batch indexing for initial data load",
+          "description": "Create a batch process to index all existing manifests and READMEs",
           "status": "pending",
           "dependencies": [
-            1
+            1,
+            2
           ],
-          "details": "1. Design and implement server card component showing key metadata (name, description, tags, popularity)\n2. Create grid/list layout for displaying multiple server cards\n3. Implement pagination or infinite scroll for browsing many results\n4. Build detailed server view showing full README content\n5. Add syntax highlighting for code blocks in README\n6. Implement responsive design for both card and detail views\n7. Add animations for transitions between views"
+          "details": "Develop a batch indexing process that retrieves all existing manifests and READMEs, generates embeddings for them, and uploads them to Pinecone in batches. Implement progress tracking and error handling with retry logic. Optimize for performance with parallel processing where appropriate. Store metadata with each vector including server ID, version, tags, install count, and last updated timestamp. Create a command-line interface to trigger reindexing when needed."
         },
         {
           "id": 4,
-          "title": "Build installation flow with code snippet generation",
-          "description": "Create the installation process UI with generated code snippets for users to copy",
-          "status": "pending",
-          "dependencies": [
-            3
-          ],
-          "details": "1. Design and implement install button on server cards and detail view\n2. Create installation confirmation modal with options\n3. Implement code snippet generation based on selected options\n4. Add copy-to-clipboard functionality for code snippets\n5. Create visual feedback for successful copy operations\n6. Implement installation tracking for analytics\n7. Add helpful tooltips and documentation links"
-        },
-        {
-          "id": 5,
-          "title": "Implement performance optimizations and final polish",
-          "description": "Add client-side caching, performance improvements, and final UI polish",
+          "title": "Implement real-time indexing for new or updated content",
+          "description": "Create a service to automatically index new or updated manifests and READMEs",
           "status": "pending",
           "dependencies": [
             2,
+            3
+          ],
+          "details": "Implement event listeners or hooks that trigger when manifests or READMEs are created or updated. Create a service that generates embeddings for the new/updated content and upserts them into Pinecone. Implement deduplication logic to avoid duplicate entries. Add logging for indexing operations. Create a mechanism to handle deletions by removing corresponding vectors from the index."
+        },
+        {
+          "id": 5,
+          "title": "Build search API with natural language query support",
+          "description": "Create an API endpoint that accepts natural language queries and returns relevant results",
+          "status": "pending",
+          "dependencies": [
             3,
             4
           ],
-          "details": "1. Implement client-side caching of search results and server details\n2. Add analytics tracking for key user interactions\n3. Optimize component rendering with React.memo or useMemo where appropriate\n4. Implement skeleton loaders for improved perceived performance\n5. Add error boundary components to prevent UI crashes\n6. Conduct cross-browser testing and fix any compatibility issues\n7. Perform accessibility audit and implement necessary improvements"
+          "details": "Implement a REST API endpoint that accepts natural language queries. Convert queries to embeddings using the same embedding model. Query the Pinecone index with the embedding to find semantically similar content. Implement filtering capabilities by tags, version, recency, and popularity using Pinecone's metadata filtering. Create a ranking algorithm that combines semantic similarity scores with install count/popularity. Add pagination support with customizable page size. Include result limiting options."
+        },
+        {
+          "id": 6,
+          "title": "Implement search results enhancement and testing",
+          "description": "Enhance search results with additional metadata and implement comprehensive testing",
+          "status": "pending",
+          "dependencies": [
+            5
+          ],
+          "details": "Enrich search results with additional metadata from the original documents. Implement result highlighting to show where matches occurred. Create a comprehensive test suite with unit tests for each component and integration tests for the entire search pipeline. Develop a set of benchmark queries to evaluate search quality. Implement monitoring for search performance and relevance. Create documentation for the search API including examples and best practices."
         }
       ]
     },
     {
       "id": 6,
-      "title": "Implement Analytics System",
-      "description": "Create a system to track and display installation metrics and search usage.",
+      "title": "Develop core Web UI components",
+      "description": "Create the React-based web interface for browsing, searching, and viewing MCP servers.",
       "status": "pending",
       "dependencies": [
         2,
-        4
+        5
       ],
       "priority": "medium",
-      "details": "1. Design analytics schema in PostgreSQL or DynamoDB\n2. Implement event tracking for:\n   - search_performed (session ID, query)\n   - server_installed (server ID, timestamp)\n3. Create API endpoints to:\n   - Record analytics events\n   - Retrieve aggregated metrics\n4. Implement a background job to update install_count for each server\n5. Add basic dashboard view for admins\n6. Implement data retention policies\n7. Add anonymization for privacy compliance\n8. Create charts for installation trends",
-      "testStrategy": "1. Verify event recording with test events\n2. Validate aggregation logic for metrics\n3. Test concurrent event handling\n4. Verify dashboard data accuracy\n5. Load test with simulated high volume of events",
+      "details": "Set up React project with TypeScript and component library. Create home page with search bar and filters. Implement server card component with metadata display. Build server detail page showing full README, metadata, and analytics. Create responsive layout for mobile and desktop. Implement client-side routing. Add authentication UI components (login/signup forms). Implement search results with pagination. Create loading states and error handling for API interactions.",
+      "testStrategy": "Unit tests for React components. Integration tests for search and navigation flows. UI tests for responsive design. Accessibility testing. User testing for search and browse experience.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Design and implement analytics data schema",
-          "description": "Create the database schema to store analytics events and aggregated metrics",
+          "title": "Set up React project with TypeScript and component library",
+          "description": "Initialize the React application with TypeScript support and integrate a UI component library for consistent design",
           "status": "pending",
           "dependencies": [],
-          "details": "Design and implement a schema in PostgreSQL with the following tables: 1) events table with columns for event_type, timestamp, session_id, server_id, and a JSON field for event-specific data; 2) daily_metrics table for pre-aggregated data with columns for date, metric_name, and metric_value; 3) servers table with installation data. Include appropriate indexes on timestamp, event_type, and server_id fields. Add partitioning by date for the events table to improve query performance and facilitate data retention policies."
+          "details": "Create a new React project using Create React App with TypeScript template. Install and configure a component library (e.g., Material UI, Chakra UI, or Ant Design). Set up ESLint and Prettier for code quality. Configure folder structure following best practices (components, pages, hooks, utils, etc.). Set up client-side routing with React Router. Create initial theme configuration for consistent styling."
         },
         {
           "id": 2,
-          "title": "Implement event tracking and API endpoints",
-          "description": "Create API endpoints to record analytics events and retrieve metrics",
+          "title": "Implement authentication UI components",
+          "description": "Create login, signup, and user profile components with form validation",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "Implement REST API endpoints: 1) POST /api/analytics/events to record events like search_performed and server_installed with appropriate validation; 2) GET /api/analytics/metrics to retrieve aggregated metrics with filtering options by date range and metric type. Implement middleware to capture and store search events automatically. Add rate limiting to prevent abuse. Include proper error handling and logging. Ensure all endpoints are properly authenticated and authorized."
+          "details": "Build login form with email/password fields and validation. Create signup form with necessary fields (username, email, password, etc.) and validation. Implement password reset flow UI. Design user profile component to display user information. Add form validation using a library like Formik or React Hook Form. Create authentication context/provider for managing auth state. Implement UI for displaying authentication errors from API."
         },
         {
           "id": 3,
-          "title": "Create background processing for metrics aggregation",
-          "description": "Implement background jobs to process raw events into aggregated metrics",
+          "title": "Create home page with search functionality",
+          "description": "Develop the main landing page with search bar, filters, and initial layout",
           "status": "pending",
           "dependencies": [
-            1,
-            2
+            1
           ],
-          "details": "Create a scheduled background job using a task queue (like Celery) that runs hourly to process raw events into the daily_metrics table. Implement aggregation functions for: total searches, unique searches, installation count, active servers, and user engagement metrics. Add a separate daily job to update the install_count for each server. Include error handling, retry logic, and monitoring for these background jobs. Implement a mechanism to backfill historical data if needed."
+          "details": "Design and implement the home page layout. Create a prominent search bar component with autocomplete suggestions. Implement filter components (dropdown, checkbox, radio buttons) for refining search. Add category browsing section. Create responsive navigation header. Design footer with relevant links. Implement client-side search functionality that will later connect to the API."
         },
         {
           "id": 4,
-          "title": "Build admin dashboard with visualization components",
-          "description": "Create a dashboard UI for administrators to view analytics data",
+          "title": "Build server card component for search results",
+          "description": "Create reusable server card component to display MCP server metadata in search results",
           "status": "pending",
           "dependencies": [
-            2,
             3
           ],
-          "details": "Implement an admin dashboard page with: 1) Overview section showing key metrics; 2) Installation trends chart using a charting library like Chart.js; 3) Search usage statistics with filtering options; 4) Server activity heatmap. Make all charts interactive with date range selectors. Ensure the dashboard is responsive and performs well with large datasets by implementing pagination and lazy loading. Add export functionality for reports in CSV format."
+          "details": "Design server card UI with title, description, tags, and key metadata. Implement hover and focus states for better UX. Add favorite/bookmark functionality to cards. Create skeleton loading state for cards. Ensure the card is responsive across device sizes. Add truncation for long text with tooltips. Include visual indicators for server status or popularity."
         },
         {
           "id": 5,
-          "title": "Implement data retention and privacy compliance features",
-          "description": "Add data retention policies and privacy compliance features",
+          "title": "Implement search results page with pagination",
+          "description": "Create the search results view with server cards, pagination, and sorting options",
           "status": "pending",
           "dependencies": [
-            1,
-            2,
-            3
+            3,
+            4
           ],
-          "details": "Implement a data retention policy that automatically archives events older than 90 days to cold storage and purges data older than 1 year. Create an anonymization process that removes or hashes personally identifiable information in the analytics data. Add configuration options for admins to adjust retention periods. Implement a privacy compliance report that shows what data is being collected and stored. Create a data purging API endpoint that allows for manual deletion of specific data points when needed for GDPR compliance."
+          "details": "Build search results container to display server cards in a grid/list. Implement pagination controls with configurable items per page. Add sorting options (popularity, date, relevance). Create empty state for no results. Implement loading states during API calls. Add filter sidebar/modal for mobile. Ensure the page maintains search parameters in URL for sharing. Create error handling UI for failed searches."
+        },
+        {
+          "id": 6,
+          "title": "Develop server detail page",
+          "description": "Create comprehensive server detail view showing README, metadata, and analytics",
+          "status": "pending",
+          "dependencies": [
+            4
+          ],
+          "details": "Design layout for server detail page. Implement Markdown/HTML rendering for README content. Create metadata section displaying all server information. Add tabs or sections for different content types (overview, files, analytics). Implement related servers section. Add user interaction features (star, bookmark, share). Create mobile-responsive layout for the detail page. Add breadcrumb navigation for better UX."
+        },
+        {
+          "id": 7,
+          "title": "Implement API integration and error handling",
+          "description": "Connect UI components to backend APIs and implement comprehensive error handling",
+          "status": "pending",
+          "dependencies": [
+            2,
+            5,
+            6
+          ],
+          "details": "Create API service layer with Axios or fetch. Implement authentication token management. Connect search functionality to search API endpoints. Integrate server detail page with server data API. Add loading states for all API interactions. Implement comprehensive error handling with user-friendly messages. Add retry mechanisms for failed requests. Implement client-side caching for better performance. Create offline support for critical features."
         }
       ]
     },
     {
       "id": 7,
-      "title": "Develop VS Code Extension",
-      "description": "Create a VS Code extension for searching and installing MCP servers directly from the IDE.",
+      "title": "Create server submission and survey functionality",
+      "description": "Implement the authenticated workflows for submitting new servers and providing feedback through surveys.",
       "status": "pending",
       "dependencies": [
-        4
+        2,
+        3,
+        6
       ],
       "priority": "medium",
-      "details": "1. Set up VS Code extension project (TypeScript)\n2. Implement side panel UI with search box and results list\n3. Create commands for mcp.search and mcp.install\n4. Implement workspace detection and mcp.json handling\n5. Add functionality to:\n   - Search servers using the API\n   - Display results in the side panel\n   - Install selected server by updating mcp.json\n   - Inject code snippets into active file if requested\n6. Add configuration options for the extension\n7. Implement telemetry for usage tracking\n8. Create documentation and help resources",
-      "testStrategy": "1. Manual testing in VS Code\n2. Extension API tests\n3. Test installation flow with various project structures\n4. Verify mcp.json creation and updating\n5. Test code snippet injection in different file types",
+      "details": "Create server submission form with live manifest validation. Implement submission workflow (pending → approved). Build survey modal with rating and comments fields. Create API endpoints for submission and survey data. Implement authorization checks to ensure only authenticated users can submit or survey. Add submission status dashboard for contributors. Create notification system for submission status changes.",
+      "testStrategy": "Unit tests for submission and survey components. Integration tests for the complete submission workflow. Validation tests for manifest schema checking. User testing of the submission and survey experiences.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Set up VS Code extension project structure",
-          "description": "Initialize the VS Code extension project with TypeScript and establish the basic scaffolding needed for development.",
+          "title": "Create server submission form with validation",
+          "description": "Build the UI form for server submissions with real-time manifest validation to ensure data quality before submission",
           "status": "pending",
           "dependencies": [],
-          "details": "1. Install Node.js and npm if not already installed\n2. Install Yeoman and VS Code Extension Generator: `npm install -g yo generator-code`\n3. Generate extension scaffold: `yo code`\n4. Configure TypeScript settings in tsconfig.json\n5. Set up extension manifest (package.json) with basic metadata, activation events, and commands\n6. Create initial folder structure (src/, resources/, etc.)\n7. Set up testing framework with basic tests\n8. Ensure the extension can be launched in debug mode"
+          "details": "Implement a form component with fields for server details including name, description, manifest URL, and tags. Add client-side validation to check required fields. Create a manifest validator that fetches and validates the manifest structure in real-time as users type the URL. Show validation feedback with clear error messages. Include a preview of the server data based on the manifest."
         },
         {
           "id": 2,
-          "title": "Implement side panel UI and basic commands",
-          "description": "Create the extension's user interface with a side panel containing search functionality and implement the core commands.",
+          "title": "Implement API endpoints for server submissions",
+          "description": "Create backend API endpoints to handle server submissions with proper authentication and data validation",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "1. Create a WebviewPanel or TreeView for the side panel UI\n2. Design and implement the search box and results list UI using HTML/CSS\n3. Register the commands `mcp.search` and `mcp.install` in package.json\n4. Implement command handlers in extension.ts\n5. Set up communication between the webview and extension host\n6. Create icons and other visual assets for the extension\n7. Implement basic state management for the panel\n8. Add keyboard shortcuts for the commands"
+          "details": "Develop RESTful API endpoints for creating, reading, and updating server submissions. Implement server-side validation of submission data and manifest structure. Create database models for storing submission data with status field (pending/approved/rejected). Add authentication middleware to ensure only logged-in users can submit. Include rate limiting to prevent abuse. Document the API endpoints for frontend integration."
         },
         {
           "id": 3,
-          "title": "Implement MCP API integration and search functionality",
-          "description": "Connect to the MCP API to enable server searching and display results in the side panel.",
+          "title": "Build submission workflow and status dashboard",
+          "description": "Implement the submission workflow system and create a dashboard for users to track their submissions",
           "status": "pending",
           "dependencies": [
             2
           ],
-          "details": "1. Create a service class to handle API communication\n2. Implement the search functionality to query the MCP API\n3. Parse and format search results for display\n4. Add error handling for API requests\n5. Implement pagination or infinite scrolling for search results\n6. Add filtering options for search results\n7. Create data models for server information\n8. Implement caching for recent searches to improve performance"
+          "details": "Create a workflow system that handles the state transitions (pending → approved/rejected). Build an admin interface for reviewing and approving/rejecting submissions. Implement a user dashboard that displays all submissions from the current user with their statuses. Add filtering and sorting capabilities to the dashboard. Include submission details view with full information about each submission."
         },
         {
           "id": 4,
-          "title": "Implement workspace detection and server installation",
-          "description": "Add functionality to detect the current workspace, handle mcp.json files, and install selected servers.",
+          "title": "Create survey modal with rating system",
+          "description": "Develop a survey interface for collecting user feedback about servers with ratings and comments",
           "status": "pending",
           "dependencies": [
-            3
+            2
           ],
-          "details": "1. Implement workspace detection to find project root\n2. Create utilities to read and write mcp.json files\n3. Implement the server installation process\n4. Add validation for compatibility with the current project\n5. Create progress indicators for installation process\n6. Implement error handling for installation failures\n7. Add support for different project types\n8. Create notification system for installation events"
+          "details": "Design and implement a modal component for surveys that can be triggered from server details pages. Include a star rating system (1-5 stars) with clear visual feedback. Add text fields for collecting detailed comments and feedback. Implement client-side validation to ensure required fields are completed. Create a responsive design that works well on both desktop and mobile devices."
         },
         {
           "id": 5,
-          "title": "Add configuration, code snippets, and documentation",
-          "description": "Implement extension configuration options, code snippet injection, telemetry, and create documentation.",
+          "title": "Implement API endpoints for survey data",
+          "description": "Create backend API endpoints to handle survey submissions with authentication and data validation",
           "status": "pending",
           "dependencies": [
             4
           ],
-          "details": "1. Add configuration options in package.json\n2. Implement settings UI in the extension\n3. Create code snippet templates for different languages\n4. Implement snippet injection into active files\n5. Add telemetry for tracking extension usage (with opt-out option)\n6. Write comprehensive README.md with installation and usage instructions\n7. Create additional documentation (changelog, contributing guide)\n8. Add contextual help within the extension UI\n9. Package the extension for publishing to VS Code Marketplace"
+          "details": "Develop RESTful API endpoints for creating and retrieving survey data. Implement server-side validation of survey inputs. Create database models for storing survey responses with relationships to users and servers. Add authentication checks to ensure only authenticated users can submit surveys. Implement logic to prevent duplicate surveys from the same user for the same server. Add aggregation endpoints to calculate average ratings and compile feedback."
+        },
+        {
+          "id": 6,
+          "title": "Build notification system for submission status changes",
+          "description": "Create a notification system to alert users about changes to their submission status",
+          "status": "pending",
+          "dependencies": [
+            3,
+            5
+          ],
+          "details": "Implement a notification service that monitors submission status changes. Create database models for storing notification data. Develop a notification center UI component to display recent notifications to users. Add real-time notifications using WebSockets or a similar technology. Implement email notifications for important status changes. Create preference settings to allow users to configure notification preferences."
         }
       ]
     },
     {
       "id": 8,
-      "title": "Develop Cursor and Windsurf IDE Integrations",
-      "description": "Create integrations for Cursor and Windsurf IDEs to provide similar functionality as the VS Code extension.",
+      "title": "Develop IDE plugins",
+      "description": "Build extensions for VS Code, Cursor, and Windsurf that enable searching, installing, and opening MCP servers.",
       "status": "pending",
       "dependencies": [
-        4,
-        7
+        5,
+        6
       ],
       "priority": "medium",
-      "details": "1. Research Cursor and Windsurf SDK/API capabilities\n2. Implement pane UI for each IDE following their design patterns\n3. Reuse core search and install logic from VS Code extension\n4. Adapt the UI to match each IDE's style guidelines\n5. Implement IDE-specific features as needed\n6. Create consistent user experience across all IDEs\n7. Add telemetry for usage tracking\n8. Test compatibility with different IDE versions",
-      "testStrategy": "1. Manual testing in each IDE\n2. Verify feature parity with VS Code extension\n3. Test installation flow in each IDE\n4. Collect user feedback from early adopters\n5. Test with different project types and configurations",
+      "details": "Create VS Code extension with TypeScript. Implement mcp.search command with side panel results. Build mcp.install command to inject mcp.json in workspace. Create mcp.open-in-ide command for deep-linking. Implement similar functionality for Cursor and Windsurf. Create authentication flow for IDE plugins. Build common library for shared functionality across plugins. Implement deep link URI scheme handlers according to Appendix B.",
+      "testStrategy": "Unit tests for plugin commands. Integration tests with mock IDE environments. End-to-end tests for complete workflows. User testing with different IDEs. Verify deep-link functionality across platforms.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Research and document Cursor and Windsurf IDE extension APIs",
-          "description": "Investigate the extension development capabilities of both Cursor and Windsurf IDEs, documenting their APIs, extension points, and limitations compared to VS Code.",
+          "title": "Create shared library for IDE plugins",
+          "description": "Develop a common TypeScript library that will be used across all IDE plugins to avoid code duplication and ensure consistent functionality.",
           "status": "pending",
           "dependencies": [],
-          "details": "Create a comprehensive document covering: extension initialization process, UI component APIs, command registration, settings management, and extension packaging for both IDEs. Identify which VS Code extension APIs have direct equivalents and which will require custom implementations. Document any IDE-specific features that could enhance the integration. Include code snippets showing basic extension structure for each IDE."
+          "details": "Build a TypeScript library that handles: API communication with MCP servers, authentication token management, search result formatting, and installation utilities. Export interfaces for search results, server configurations, and authentication responses. Implement utility functions for validating server configurations and formatting search results. Package as an npm module that can be imported by each IDE plugin."
         },
         {
           "id": 2,
-          "title": "Create core architecture for cross-IDE compatibility",
-          "description": "Design and implement a modular architecture that allows sharing core functionality while accommodating IDE-specific implementations.",
+          "title": "Implement authentication flow module",
+          "description": "Create a reusable authentication module that handles user login, token storage, and refresh mechanisms for all IDE plugins.",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "Develop an abstraction layer that separates the core search and install logic from IDE-specific UI implementations. Create interface definitions for UI components, commands, and settings that each IDE implementation will need to fulfill. Refactor the existing VS Code extension to fit this new architecture. Implement a factory pattern to instantiate the appropriate implementation based on the detected IDE. Document the architecture with diagrams showing the component relationships and data flow."
+          "details": "Using the shared library, implement OAuth2 authentication flow. Create functions to initiate login, handle callbacks, securely store tokens in IDE-specific secure storage, refresh expired tokens, and handle logout. Implement appropriate error handling for authentication failures. Design the module to work with VS Code's SecretStorage, and equivalent mechanisms in Cursor and Windsurf."
         },
         {
           "id": 3,
-          "title": "Implement Cursor IDE integration",
-          "description": "Build the extension for Cursor IDE using their extension API and following their design patterns.",
+          "title": "Develop VS Code extension core functionality",
+          "description": "Create the foundation for the VS Code extension with the three main commands: search, install, and open.",
           "status": "pending",
           "dependencies": [
+            1,
             2
           ],
-          "details": "Implement the UI components for Cursor IDE, including the search pane, results display, and package details view. Adapt the VS Code extension's styling to match Cursor's design guidelines. Register commands and keyboard shortcuts according to Cursor's conventions. Implement Cursor-specific features identified during research. Create the extension manifest and packaging configuration for Cursor. Test the implementation on multiple versions of Cursor IDE."
+          "details": "Initialize VS Code extension project with TypeScript. Register the three commands: mcp.search, mcp.install, and mcp.open-in-ide. Implement mcp.search to display results in a WebView panel with proper formatting and pagination. Build mcp.install to inject mcp.json into the current workspace with proper error handling. Create mcp.open-in-ide to handle deep-linking according to Appendix B specifications. Add appropriate context menu integration points."
         },
         {
           "id": 4,
-          "title": "Implement Windsurf IDE integration",
-          "description": "Build the extension for Windsurf IDE using their extension API and following their design patterns.",
+          "title": "Implement Cursor IDE plugin",
+          "description": "Adapt the VS Code extension to work with Cursor IDE, accounting for any API differences.",
           "status": "pending",
           "dependencies": [
-            2
+            1,
+            2,
+            3
           ],
-          "details": "Implement the UI components for Windsurf IDE, including the search pane, results display, and package details view. Adapt the VS Code extension's styling to match Windsurf's design guidelines. Register commands and keyboard shortcuts according to Windsurf's conventions. Implement Windsurf-specific features identified during research. Create the extension manifest and packaging configuration for Windsurf. Test the implementation on multiple versions of Windsurf IDE."
+          "details": "Fork the VS Code extension codebase for Cursor compatibility. Identify and modify VS Code-specific APIs that differ in Cursor. Test and ensure the three main commands work properly in Cursor. Update authentication flow if needed for Cursor-specific requirements. Package the extension according to Cursor's distribution guidelines."
         },
         {
           "id": 5,
-          "title": "Implement cross-IDE telemetry and analytics",
-          "description": "Create a unified telemetry system that works across all IDE integrations while respecting each platform's privacy guidelines.",
+          "title": "Implement Windsurf IDE plugin",
+          "description": "Create the Windsurf extension with equivalent functionality to the VS Code and Cursor plugins.",
           "status": "pending",
           "dependencies": [
-            3,
-            4
+            1,
+            2
           ],
-          "details": "Design a telemetry data model that captures important usage metrics (searches, installations, errors) consistently across all IDEs. Implement IDE-specific telemetry adapters that conform to each platform's best practices. Add telemetry collection points throughout the shared codebase. Create a dashboard for visualizing usage across different IDEs. Ensure all telemetry collection includes appropriate opt-out mechanisms and complies with privacy regulations. Document what data is collected and how it's used."
+          "details": "Research Windsurf extension API and development patterns. Implement the three core commands using the shared library components. Create Windsurf-specific UI components for search results display. Adapt the authentication flow for Windsurf's security model. Package the extension according to Windsurf's distribution requirements."
         },
         {
           "id": 6,
-          "title": "Perform cross-IDE testing and release preparation",
-          "description": "Conduct comprehensive testing across all IDE platforms and prepare for coordinated release.",
+          "title": "Implement deep link URI scheme handlers",
+          "description": "Create URI scheme handlers for all three IDE plugins to enable deep linking from external applications.",
           "status": "pending",
           "dependencies": [
             3,
             4,
             5
           ],
-          "details": "Create a test plan covering all features across the three IDE platforms. Implement automated tests where possible. Conduct manual testing on different OS platforms and IDE versions. Create unified documentation that highlights any platform-specific differences. Prepare release packages for each IDE's extension marketplace. Create release notes and update documentation. Implement a coordinated release strategy to launch all extensions within the same timeframe. Set up monitoring for post-release issues."
+          "details": "Implement URI scheme handlers according to Appendix B specifications. Register custom URI protocols for each IDE (vscode://mcp/, cursor://mcp/, windsurf://mcp/). Create handlers for different URI patterns including server opening, search queries, and specific resource access. Test deep linking from browsers and other applications. Ensure proper error handling for malformed URIs."
+        },
+        {
+          "id": 7,
+          "title": "Create comprehensive documentation and publish extensions",
+          "description": "Document all plugin features, prepare for marketplace publication, and create user guides for all three IDE plugins.",
+          "status": "pending",
+          "dependencies": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "details": "Create README files with installation and usage instructions for each plugin. Document all commands, keyboard shortcuts, and configuration options. Create sample screenshots and usage examples. Prepare marketplace listings with appropriate metadata, tags, and descriptions. Submit extensions to VS Code Marketplace, Cursor Extension Store, and Windsurf Plugin Repository. Create a developer guide for maintaining and extending the plugins."
         }
       ]
     },
     {
       "id": 9,
-      "title": "Implement Deployment Infrastructure",
-      "description": "Set up cloud infrastructure for hosting the marketplace services.",
+      "title": "Implement analytics tracking and dashboard",
+      "description": "Create the system for tracking events and displaying analytics data for administrators.",
       "status": "pending",
       "dependencies": [
-        1,
-        2,
         3,
-        4
+        6,
+        7
       ],
-      "priority": "high",
-      "details": "1. Configure Vercel for Web UI deployment\n2. Set up AWS Lambda for ingestion service\n3. Configure Pinecone Cloud for vector database\n4. Set up PostgreSQL or DynamoDB for analytics\n5. Implement CI/CD pipelines for automated deployment\n6. Configure monitoring and alerting\n7. Set up logging and error tracking\n8. Implement backup and disaster recovery\n9. Configure security settings (HTTPS, IAM, etc.)\n10. Set up staging and production environments",
-      "testStrategy": "1. Verify deployment process with test deployments\n2. Test scaling under load\n3. Validate monitoring and alerting\n4. Perform security assessment\n5. Test disaster recovery procedures",
+      "priority": "low",
+      "details": "Implement event tracking for search_performed, server_installed, server_submitted, and survey_completed. Create data aggregation service for metrics calculation. Build admin dashboard UI with charts and filters. Implement server-specific analytics on detail pages. Create API endpoints for analytics data. Add export functionality for reports. Implement access control to ensure only admins can view full analytics.",
+      "testStrategy": "Unit tests for event tracking and aggregation. Integration tests for dashboard data loading. Verify metrics calculations with test data. Test access control for admin-only views. Performance testing for analytics queries.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Set up core cloud accounts and access management",
-          "description": "Create and configure all necessary cloud provider accounts with proper IAM roles and permissions",
+          "title": "Implement event tracking system",
+          "description": "Create a client and server-side event tracking system to capture user interactions",
           "status": "pending",
           "dependencies": [],
-          "details": "1. Create accounts for Vercel, AWS, and Pinecone Cloud if not already existing\n2. Set up IAM users and roles in AWS with least privilege principle\n3. Configure access keys and permissions for CI/CD integration\n4. Document all account credentials in a secure location\n5. Implement multi-factor authentication for all admin accounts"
+          "details": "Implement a tracking service that captures the required events (search_performed, server_installed, server_submitted, survey_completed). The service should handle both client-side events via JavaScript and server-side events via API calls. Each event should include relevant metadata (timestamp, user ID if available, event-specific data). Implement a queue system to handle high volumes and ensure events aren't lost during network issues. Add appropriate logging and error handling."
         },
         {
           "id": 2,
-          "title": "Configure database infrastructure",
-          "description": "Set up and configure Pinecone for vector database and PostgreSQL/DynamoDB for analytics data",
+          "title": "Create analytics data storage and aggregation service",
+          "description": "Develop the backend service for storing events and calculating aggregated metrics",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "1. Create a Pinecone index with appropriate dimensions and metric for vector search\n2. Set up PostgreSQL RDS instance or DynamoDB tables based on analytics requirements\n3. Configure network security groups and access controls\n4. Implement database backup schedules\n5. Create necessary schemas and initial tables\n6. Test connections from development environment"
+          "details": "Design and implement the database schema for storing tracked events. Create a service that processes incoming events, stores them in the database, and performs real-time and/or batch aggregation for common metrics (e.g., daily/weekly/monthly counts, conversion rates, user engagement metrics). Implement data retention policies and optimization for query performance. The service should provide methods for querying both raw events and pre-aggregated metrics."
         },
         {
           "id": 3,
-          "title": "Deploy serverless compute infrastructure",
-          "description": "Set up AWS Lambda functions for the ingestion service with proper configurations",
+          "title": "Develop API endpoints for analytics data",
+          "description": "Create secure REST API endpoints that serve analytics data to the dashboard",
           "status": "pending",
           "dependencies": [
-            1
+            2
           ],
-          "details": "1. Create Lambda functions with appropriate runtime and memory configurations\n2. Set up API Gateway to expose Lambda endpoints\n3. Configure environment variables for different environments\n4. Set up IAM roles for Lambda to access other AWS services\n5. Implement proper timeout and concurrency settings\n6. Test basic Lambda function deployment and invocation"
+          "details": "Implement RESTful API endpoints that provide access to both raw events and aggregated metrics. Include filtering capabilities (by date range, event type, etc.), pagination for large result sets, and sorting options. Implement access control middleware to ensure only authenticated administrators can access these endpoints. Add rate limiting to prevent abuse. Create endpoints for data export functionality in common formats (CSV, JSON)."
         },
         {
           "id": 4,
-          "title": "Configure Vercel for Web UI deployment",
-          "description": "Set up Vercel project for the frontend application with proper build settings",
+          "title": "Build admin dashboard UI with charts and filters",
+          "description": "Create the frontend interface for administrators to view and interact with analytics data",
           "status": "pending",
           "dependencies": [
-            1
+            3
           ],
-          "details": "1. Create a new Vercel project linked to the frontend repository\n2. Configure build settings and environment variables\n3. Set up custom domains and HTTPS\n4. Configure preview deployments for pull requests\n5. Test initial deployment of a basic frontend\n6. Set up proper team access controls"
+          "details": "Develop a responsive dashboard UI with multiple views for different analytics perspectives. Implement interactive charts and graphs using a library like Chart.js or D3.js. Add filtering controls for date ranges, event types, and other relevant dimensions. Create a tabular data view with sorting and filtering capabilities. Implement the export functionality UI that connects to the API endpoints. Ensure the UI is responsive and works well on different screen sizes."
         },
         {
           "id": 5,
-          "title": "Implement CI/CD pipelines",
-          "description": "Create automated CI/CD workflows for all components of the marketplace",
+          "title": "Implement server-specific analytics and access control",
+          "description": "Add detailed analytics for individual servers and finalize access control system",
           "status": "pending",
           "dependencies": [
-            2,
             3,
             4
           ],
-          "details": "1. Set up GitHub Actions or similar CI/CD tool\n2. Create workflows for testing, building, and deploying the frontend to Vercel\n3. Implement workflows for deploying Lambda functions\n4. Configure database migration pipelines\n5. Implement automated testing in the pipeline\n6. Set up approval gates for production deployments\n7. Document the CI/CD process for the team"
-        },
-        {
-          "id": 6,
-          "title": "Configure monitoring, logging and alerting",
-          "description": "Implement comprehensive observability across all infrastructure components",
-          "status": "pending",
-          "dependencies": [
-            2,
-            3,
-            4,
-            5
-          ],
-          "details": "1. Set up CloudWatch for AWS resources monitoring\n2. Implement application logging with structured format\n3. Configure error tracking with Sentry or similar tool\n4. Set up alerting for critical errors and performance issues\n5. Create dashboards for key metrics\n6. Configure log retention policies\n7. Set up on-call rotation and escalation policies"
-        },
-        {
-          "id": 7,
-          "title": "Implement staging and production environments with disaster recovery",
-          "description": "Create separate environments with proper isolation and disaster recovery capabilities",
-          "status": "pending",
-          "dependencies": [
-            5,
-            6
-          ],
-          "details": "1. Duplicate infrastructure for staging and production environments\n2. Implement environment-specific configurations\n3. Set up data isolation between environments\n4. Configure disaster recovery procedures including database backups\n5. Document environment promotion process\n6. Implement security scanning in both environments\n7. Create runbooks for common operational tasks and emergency procedures"
+          "details": "Extend the analytics system to provide detailed metrics for individual server detail pages. Implement role-based access control to ensure administrators can view all analytics while regular users can only see limited data relevant to their servers. Add unit and integration tests for the entire analytics system. Create documentation for administrators on how to use the dashboard and interpret the data. Perform security review and performance optimization of the entire analytics system."
         }
       ]
     },
     {
       "id": 10,
-      "title": "Quality Assurance and Documentation",
-      "description": "Perform comprehensive testing and create documentation for the marketplace.",
+      "title": "Deploy, test, and optimize the system",
+      "description": "Finalize the application, deploy to production, and perform comprehensive testing and optimization.",
       "status": "pending",
       "dependencies": [
+        2,
+        3,
+        4,
         5,
         6,
         7,
@@ -617,54 +719,85 @@
         9
       ],
       "priority": "low",
-      "details": "1. Create test plan covering all components\n2. Perform end-to-end testing of complete user journeys\n3. Conduct performance testing (search latency, scalability)\n4. Verify non-functional requirements (99.9% uptime, etc.)\n5. Create user documentation:\n   - Web UI usage guide\n   - IDE extension installation and usage\n   - API documentation for developers\n6. Create technical documentation:\n   - System architecture\n   - Deployment procedures\n   - Troubleshooting guide\n7. Conduct user acceptance testing\n8. Address and prioritize identified issues",
-      "testStrategy": "1. Execute test plan with documented results\n2. Collect and incorporate user feedback\n3. Verify documentation accuracy and completeness\n4. Perform accessibility and usability testing\n5. Validate against success metrics defined in PRD",
+      "details": "Set up production environment with proper scaling. Configure HTTPS and security headers. Implement rate limiting and DDoS protection. Perform security audit and fix vulnerabilities. Optimize database queries and add caching where appropriate. Conduct load testing and performance optimization. Create monitoring and alerting system. Write documentation for API and user guides. Implement feature flags for gradual rollout. Create backup and disaster recovery procedures.",
+      "testStrategy": "End-to-end testing of all user flows. Security penetration testing. Load testing to verify scalability requirements. Performance testing for latency requirements. Verify monitoring and alerting systems. User acceptance testing with stakeholders.",
       "subtasks": [
         {
           "id": 1,
-          "title": "Create Test Plan and Technical Documentation",
-          "description": "Develop a comprehensive test plan covering all system components and create technical documentation for the marketplace system.",
+          "title": "Set up production environment with security configurations",
+          "description": "Prepare the production infrastructure with proper scaling capabilities, HTTPS, and security headers",
           "status": "pending",
           "dependencies": [],
-          "details": "1. Create a test plan that includes test cases for all components (frontend, backend, API, IDE extension)\n2. Define test scenarios for functional and non-functional requirements\n3. Document test environment setup and test data requirements\n4. Create technical documentation including:\n   - System architecture diagrams and descriptions\n   - Component interaction flows\n   - Database schema\n   - API endpoints and specifications\n   - Deployment procedures for different environments\n   - System monitoring and maintenance procedures"
+          "details": "Configure cloud infrastructure (AWS/GCP/Azure) with auto-scaling groups. Set up load balancers and configure HTTPS with proper SSL certificates. Implement security headers (Content-Security-Policy, X-XSS-Protection, etc.). Create separate environments for staging and production. Document the infrastructure setup with diagrams and access procedures."
         },
         {
           "id": 2,
-          "title": "Execute Testing and Create User Documentation",
-          "description": "Perform comprehensive testing according to the test plan and develop user-facing documentation for different user types.",
+          "title": "Implement protection mechanisms and security audit",
+          "description": "Add rate limiting, DDoS protection, and perform a comprehensive security audit",
           "status": "pending",
           "dependencies": [
             1
           ],
-          "details": "1. Execute functional testing of all components based on the test plan\n2. Perform end-to-end testing of complete user journeys (registration, search, purchase, etc.)\n3. Conduct performance testing (response times, search latency, concurrent user handling)\n4. Verify non-functional requirements (99.9% uptime, security, etc.)\n5. Create user documentation including:\n   - Web UI usage guide with screenshots and step-by-step instructions\n   - IDE extension installation and configuration guide\n   - API documentation for third-party developers\n   - FAQ section for common user questions"
+          "details": "Implement rate limiting at the API gateway level. Set up DDoS protection using cloud provider tools or services like Cloudflare. Conduct a thorough security audit including penetration testing, code review for security vulnerabilities, and dependency scanning. Document all findings and create a prioritized list of security issues to address."
         },
         {
           "id": 3,
-          "title": "Conduct User Acceptance Testing and Bug Tracking",
-          "description": "Organize and facilitate user acceptance testing sessions and implement a systematic approach to track and prioritize identified issues.",
+          "title": "Optimize database and implement caching",
+          "description": "Improve database performance and add appropriate caching mechanisms",
           "status": "pending",
           "dependencies": [
-            2
+            1
           ],
-          "details": "1. Recruit representative users for UAT sessions\n2. Prepare UAT scenarios and test cases\n3. Facilitate UAT sessions and collect feedback\n4. Document all identified issues in the bug tracking system\n5. Categorize bugs by severity and impact\n6. Prioritize issues based on business impact and technical complexity\n7. Create reproducible test cases for each identified issue\n8. Generate UAT summary report with key findings and recommendations"
+          "details": "Analyze and optimize database queries using explain plans. Add indexes where needed. Implement query caching for frequently accessed data. Set up Redis or Memcached for application-level caching. Create a caching strategy document that outlines what data is cached, invalidation rules, and TTL values. Monitor query performance before and after optimizations."
         },
         {
           "id": 4,
-          "title": "Bug Resolution and Documentation Finalization",
-          "description": "Address critical issues identified during testing and finalize all documentation for release.",
+          "title": "Conduct load testing and performance optimization",
+          "description": "Test system under load and optimize performance bottlenecks",
           "status": "pending",
           "dependencies": [
+            2,
             3
           ],
-          "details": "1. Work with development team to fix critical and high-priority issues\n2. Perform regression testing on fixed issues\n3. Update documentation based on changes made during bug fixing\n4. Create a troubleshooting guide addressing common issues and their solutions\n5. Finalize and publish all documentation:\n   - Technical documentation in the development wiki\n   - User documentation on the help center\n   - API documentation on the developer portal\n6. Prepare final QA sign-off report including:\n   - Test coverage summary\n   - Known issues and workarounds\n   - Performance test results\n   - Recommendations for future improvements"
+          "details": "Create load testing scenarios using tools like JMeter or Locust. Simulate expected peak traffic and identify bottlenecks. Optimize application code, server configurations, and resource allocation based on test results. Implement front-end performance improvements (asset compression, lazy loading, etc.). Document performance benchmarks and improvements."
+        },
+        {
+          "id": 5,
+          "title": "Implement monitoring, alerting, and logging",
+          "description": "Set up comprehensive monitoring systems with appropriate alerting thresholds",
+          "status": "pending",
+          "dependencies": [
+            4
+          ],
+          "details": "Implement application performance monitoring (APM) using tools like New Relic, Datadog, or Prometheus/Grafana. Set up log aggregation with ELK stack or similar. Configure alerts for critical metrics (error rates, latency, resource utilization). Create dashboards for key performance indicators. Document incident response procedures and on-call rotations."
+        },
+        {
+          "id": 6,
+          "title": "Create backup and disaster recovery procedures",
+          "description": "Implement and test backup systems and disaster recovery plans",
+          "status": "pending",
+          "dependencies": [
+            5
+          ],
+          "details": "Set up automated database backups with appropriate retention policies. Implement file/asset backups. Create disaster recovery procedures including database restoration, application redeployment, and data recovery. Test the disaster recovery process in a staging environment. Document recovery time objectives (RTO) and recovery point objectives (RPO). Create runbooks for common recovery scenarios."
+        },
+        {
+          "id": 7,
+          "title": "Finalize documentation and implement feature flags",
+          "description": "Create comprehensive documentation and set up feature flags for gradual rollout",
+          "status": "pending",
+          "dependencies": [
+            6
+          ],
+          "details": "Implement feature flag system using a service like LaunchDarkly or a custom solution. Create API documentation with Swagger/OpenAPI. Write user guides and admin documentation. Document system architecture, data flows, and integration points. Create a rollout plan for new features using the feature flag system. Set up a knowledge base for support team and end users."
         }
       ]
     }
   ],
   "metadata": {
-    "projectName": "MCP-Server Marketplace Implementation",
+    "projectName": "MCP Server Marketplace Implementation",
     "totalTasks": 10,
     "sourceFile": "prd.txt",
-    "generatedAt": "2023-06-14"
+    "generatedAt": "2023-11-14"
   }
 }

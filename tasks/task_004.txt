@@ -1,77 +1,55 @@
 # Task ID: 4
-# Title: Develop Core API Endpoints
+# Title: Build data ingestion service
 # Status: pending
-# Dependencies: 2, 3
+# Dependencies: 3
 # Priority: high
-# Description: Create RESTful API endpoints for search, retrieval, and analytics functionality.
+# Description: Implement the service to ingest MCP server data from GitHub webhooks and user submissions.
 # Details:
-1. Design and document API using OpenAPI specification
-2. Implement the following endpoints:
-   - GET /api/servers - List all servers with pagination and filtering
-   - GET /api/servers/:id - Get detailed info for a specific server
-   - GET /api/search - Search servers with query parameters for text, tags, etc.
-   - POST /api/servers/:id/install - Track installation event
-   - GET /api/tags - Get all available tags for filtering
-3. Implement proper error handling and status codes
-4. Add rate limiting and request validation
-5. Set up CORS for web and IDE clients
-6. Implement response caching where appropriate
-7. Add logging for API usage and errors
+Create GitHub webhook endpoint to receive repository updates. Implement webhook secret validation for security. Build service to fetch and parse manifest files and READMEs from repositories. Create nightly sync job to ensure data consistency. Implement queue system for processing ingestion tasks asynchronously. Add validation for manifest schema according to Appendix A. Create service to handle user submissions with validation and approval workflow.
 
 # Test Strategy:
-1. Unit tests for each endpoint
-2. Integration tests with test database
-3. Load testing to verify performance under expected traffic
-4. Validate response formats against API spec
-5. Test error scenarios and edge cases
+Unit tests for webhook handler and manifest parser. Integration tests with mock GitHub payloads. Test validation logic for manifests. Verify nightly sync job with test repositories.
 
 # Subtasks:
-## 1. Design API specification and implement server listing endpoints [pending]
+## 1. Create GitHub webhook endpoint [pending]
 ### Dependencies: None
-### Description: Create OpenAPI specification and implement the first set of endpoints for listing and retrieving server information
+### Description: Implement the API endpoint to receive GitHub webhook events for repository updates
 ### Details:
-1. Design the complete API using OpenAPI 3.0 specification
-2. Document all endpoints, request/response schemas, and error codes
-3. Implement GET /api/servers endpoint with pagination (limit/offset parameters)
-4. Implement filtering capabilities (by status, tags, etc.)
-5. Implement GET /api/servers/:id endpoint for detailed server information
-6. Set up basic error handling structure for these endpoints
-7. Write unit tests for these endpoints
+Create a REST API endpoint that accepts POST requests from GitHub webhooks. The endpoint should parse the incoming payload to identify the repository and event type (push, release, etc.). Implement basic request validation to ensure the payload contains the required fields. Set up proper error handling and logging for debugging purposes. The endpoint should return appropriate HTTP status codes (200 for success, 400 for invalid requests).
 
-## 2. Implement search and tags endpoints [pending]
+## 2. Implement webhook security validation [pending]
 ### Dependencies: 4.1
-### Description: Create the search functionality and tags retrieval endpoints
+### Description: Add security validation for GitHub webhooks using webhook secrets
 ### Details:
-1. Implement GET /api/search endpoint with text search capabilities
-2. Add query parameters for filtering search results (tags, status, etc.)
-3. Implement GET /api/tags endpoint to retrieve all available tags
-4. Ensure search results are properly paginated
-5. Optimize search queries for performance
-6. Add appropriate error handling for search-specific issues
-7. Write unit tests for search and tags endpoints
+Enhance the webhook endpoint to validate the X-Hub-Signature header using the webhook secret. Store the webhook secret securely in environment variables or a secrets manager. Implement the HMAC-SHA256 signature verification algorithm to validate that requests are coming from GitHub. Reject requests with invalid signatures with a 401 Unauthorized response. Add detailed logging for security events including failed validation attempts.
 
-## 3. Implement installation tracking and enhance error handling [pending]
-### Dependencies: 4.1, 4.2
-### Description: Add installation tracking endpoint and improve overall error handling
+## 3. Build queue system for asynchronous processing [pending]
+### Dependencies: 4.2
+### Description: Implement a queue system to handle ingestion tasks asynchronously
 ### Details:
-1. Implement POST /api/servers/:id/install endpoint to track installation events
-2. Store installation data with timestamps and client information
-3. Implement comprehensive error handling across all endpoints
-4. Add appropriate HTTP status codes for different error scenarios
-5. Create standardized error response format
-6. Implement request validation using a validation library
-7. Write unit tests for installation tracking and error scenarios
+Set up a message queue system (e.g., RabbitMQ, AWS SQS, or Redis) to handle ingestion tasks asynchronously. Create producer code that adds tasks to the queue when webhook events are received. Implement consumer workers that process tasks from the queue. Add retry logic for failed tasks with exponential backoff. Implement dead-letter queue for tasks that repeatedly fail. Include monitoring and alerting for queue health and processing delays.
 
-## 4. Implement API security, performance, and observability features [pending]
-### Dependencies: 4.1, 4.2, 4.3
-### Description: Add rate limiting, CORS, caching, and logging to the API
+## 4. Implement manifest and README fetching service [pending]
+### Dependencies: 4.3
+### Description: Create service to fetch and parse manifest files and READMEs from GitHub repositories
 ### Details:
-1. Implement rate limiting for all API endpoints
-2. Configure different rate limits based on endpoint sensitivity
-3. Set up CORS to allow access from web and IDE clients
-4. Implement response caching for appropriate endpoints (GET /api/servers, GET /api/tags)
-5. Configure cache invalidation strategies
-6. Add comprehensive logging for all API requests
-7. Log errors with appropriate context for debugging
-8. Create monitoring endpoints for API health and usage statistics
+Implement a service that uses the GitHub API to fetch manifest files and READMEs from repositories. Use GitHub's content API to retrieve raw file content. Parse the manifest files according to the expected format. Extract relevant metadata from README files. Handle rate limiting from GitHub API by implementing appropriate backoff strategies. Cache repository data to minimize API calls. Implement error handling for missing files or invalid content.
+
+## 5. Add manifest schema validation [pending]
+### Dependencies: 4.4
+### Description: Implement validation for manifest schema according to Appendix A
+### Details:
+Create a schema validator for manifest files based on the specifications in Appendix A. Use a schema validation library (like JSON Schema) to define and enforce the manifest structure. Implement custom validation rules for fields with specific requirements. Create detailed error messages for validation failures to help users correct their manifests. Add unit tests for the validator with both valid and invalid manifest examples. Document the schema requirements for developers.
+
+## 6. Create user submission service [pending]
+### Dependencies: 4.5
+### Description: Build service to handle user submissions with validation and approval workflow
+### Details:
+Implement a service for users to submit new MCP server data. Create API endpoints for submission, status checking, and updates. Reuse the manifest validator from subtask 5 to validate submissions. Implement an approval workflow with states (submitted, under review, approved, rejected). Create an admin interface for reviewing and approving submissions. Send notifications to users about submission status changes. Store submission history and audit logs for compliance purposes.
+
+## 7. Implement nightly sync job [pending]
+### Dependencies: 4.4, 4.5
+### Description: Create a scheduled job to ensure data consistency by syncing with GitHub repositories
+### Details:
+Develop a scheduled job that runs nightly to sync all tracked repositories. Implement logic to detect and process changes since the last sync. Reuse the manifest fetching and validation services from previous subtasks. Add comprehensive logging for sync operations. Implement error handling and alerting for sync failures. Create a dashboard to monitor sync status and history. Ensure the job can be manually triggered for immediate syncing when needed. Add configuration options for sync frequency and depth.
 

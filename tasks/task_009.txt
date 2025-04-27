@@ -1,105 +1,43 @@
 # Task ID: 9
-# Title: Implement Deployment Infrastructure
+# Title: Implement analytics tracking and dashboard
 # Status: pending
-# Dependencies: 1, 2, 3, 4
-# Priority: high
-# Description: Set up cloud infrastructure for hosting the marketplace services.
+# Dependencies: 3, 6, 7
+# Priority: low
+# Description: Create the system for tracking events and displaying analytics data for administrators.
 # Details:
-1. Configure Vercel for Web UI deployment
-2. Set up AWS Lambda for ingestion service
-3. Configure Pinecone Cloud for vector database
-4. Set up PostgreSQL or DynamoDB for analytics
-5. Implement CI/CD pipelines for automated deployment
-6. Configure monitoring and alerting
-7. Set up logging and error tracking
-8. Implement backup and disaster recovery
-9. Configure security settings (HTTPS, IAM, etc.)
-10. Set up staging and production environments
+Implement event tracking for search_performed, server_installed, server_submitted, and survey_completed. Create data aggregation service for metrics calculation. Build admin dashboard UI with charts and filters. Implement server-specific analytics on detail pages. Create API endpoints for analytics data. Add export functionality for reports. Implement access control to ensure only admins can view full analytics.
 
 # Test Strategy:
-1. Verify deployment process with test deployments
-2. Test scaling under load
-3. Validate monitoring and alerting
-4. Perform security assessment
-5. Test disaster recovery procedures
+Unit tests for event tracking and aggregation. Integration tests for dashboard data loading. Verify metrics calculations with test data. Test access control for admin-only views. Performance testing for analytics queries.
 
 # Subtasks:
-## 1. Set up core cloud accounts and access management [pending]
+## 1. Implement event tracking system [pending]
 ### Dependencies: None
-### Description: Create and configure all necessary cloud provider accounts with proper IAM roles and permissions
+### Description: Create a client and server-side event tracking system to capture user interactions
 ### Details:
-1. Create accounts for Vercel, AWS, and Pinecone Cloud if not already existing
-2. Set up IAM users and roles in AWS with least privilege principle
-3. Configure access keys and permissions for CI/CD integration
-4. Document all account credentials in a secure location
-5. Implement multi-factor authentication for all admin accounts
+Implement a tracking service that captures the required events (search_performed, server_installed, server_submitted, survey_completed). The service should handle both client-side events via JavaScript and server-side events via API calls. Each event should include relevant metadata (timestamp, user ID if available, event-specific data). Implement a queue system to handle high volumes and ensure events aren't lost during network issues. Add appropriate logging and error handling.
 
-## 2. Configure database infrastructure [pending]
+## 2. Create analytics data storage and aggregation service [pending]
 ### Dependencies: 9.1
-### Description: Set up and configure Pinecone for vector database and PostgreSQL/DynamoDB for analytics data
+### Description: Develop the backend service for storing events and calculating aggregated metrics
 ### Details:
-1. Create a Pinecone index with appropriate dimensions and metric for vector search
-2. Set up PostgreSQL RDS instance or DynamoDB tables based on analytics requirements
-3. Configure network security groups and access controls
-4. Implement database backup schedules
-5. Create necessary schemas and initial tables
-6. Test connections from development environment
+Design and implement the database schema for storing tracked events. Create a service that processes incoming events, stores them in the database, and performs real-time and/or batch aggregation for common metrics (e.g., daily/weekly/monthly counts, conversion rates, user engagement metrics). Implement data retention policies and optimization for query performance. The service should provide methods for querying both raw events and pre-aggregated metrics.
 
-## 3. Deploy serverless compute infrastructure [pending]
-### Dependencies: 9.1
-### Description: Set up AWS Lambda functions for the ingestion service with proper configurations
+## 3. Develop API endpoints for analytics data [pending]
+### Dependencies: 9.2
+### Description: Create secure REST API endpoints that serve analytics data to the dashboard
 ### Details:
-1. Create Lambda functions with appropriate runtime and memory configurations
-2. Set up API Gateway to expose Lambda endpoints
-3. Configure environment variables for different environments
-4. Set up IAM roles for Lambda to access other AWS services
-5. Implement proper timeout and concurrency settings
-6. Test basic Lambda function deployment and invocation
+Implement RESTful API endpoints that provide access to both raw events and aggregated metrics. Include filtering capabilities (by date range, event type, etc.), pagination for large result sets, and sorting options. Implement access control middleware to ensure only authenticated administrators can access these endpoints. Add rate limiting to prevent abuse. Create endpoints for data export functionality in common formats (CSV, JSON).
 
-## 4. Configure Vercel for Web UI deployment [pending]
-### Dependencies: 9.1
-### Description: Set up Vercel project for the frontend application with proper build settings
+## 4. Build admin dashboard UI with charts and filters [pending]
+### Dependencies: 9.3
+### Description: Create the frontend interface for administrators to view and interact with analytics data
 ### Details:
-1. Create a new Vercel project linked to the frontend repository
-2. Configure build settings and environment variables
-3. Set up custom domains and HTTPS
-4. Configure preview deployments for pull requests
-5. Test initial deployment of a basic frontend
-6. Set up proper team access controls
+Develop a responsive dashboard UI with multiple views for different analytics perspectives. Implement interactive charts and graphs using a library like Chart.js or D3.js. Add filtering controls for date ranges, event types, and other relevant dimensions. Create a tabular data view with sorting and filtering capabilities. Implement the export functionality UI that connects to the API endpoints. Ensure the UI is responsive and works well on different screen sizes.
 
-## 5. Implement CI/CD pipelines [pending]
-### Dependencies: 9.2, 9.3, 9.4
-### Description: Create automated CI/CD workflows for all components of the marketplace
+## 5. Implement server-specific analytics and access control [pending]
+### Dependencies: 9.3, 9.4
+### Description: Add detailed analytics for individual servers and finalize access control system
 ### Details:
-1. Set up GitHub Actions or similar CI/CD tool
-2. Create workflows for testing, building, and deploying the frontend to Vercel
-3. Implement workflows for deploying Lambda functions
-4. Configure database migration pipelines
-5. Implement automated testing in the pipeline
-6. Set up approval gates for production deployments
-7. Document the CI/CD process for the team
-
-## 6. Configure monitoring, logging and alerting [pending]
-### Dependencies: 9.2, 9.3, 9.4, 9.5
-### Description: Implement comprehensive observability across all infrastructure components
-### Details:
-1. Set up CloudWatch for AWS resources monitoring
-2. Implement application logging with structured format
-3. Configure error tracking with Sentry or similar tool
-4. Set up alerting for critical errors and performance issues
-5. Create dashboards for key metrics
-6. Configure log retention policies
-7. Set up on-call rotation and escalation policies
-
-## 7. Implement staging and production environments with disaster recovery [pending]
-### Dependencies: 9.5, 9.6
-### Description: Create separate environments with proper isolation and disaster recovery capabilities
-### Details:
-1. Duplicate infrastructure for staging and production environments
-2. Implement environment-specific configurations
-3. Set up data isolation between environments
-4. Configure disaster recovery procedures including database backups
-5. Document environment promotion process
-6. Implement security scanning in both environments
-7. Create runbooks for common operational tasks and emergency procedures
+Extend the analytics system to provide detailed metrics for individual server detail pages. Implement role-based access control to ensure administrators can view all analytics while regular users can only see limited data relevant to their servers. Add unit and integration tests for the entire analytics system. Create documentation for administrators on how to use the dashboard and interpret the data. Perform security review and performance optimization of the entire analytics system.
 
