@@ -1,7 +1,7 @@
 # Technical Specification 
- 
+
 **MCP-Server Marketplace (MVP)**  
-Based on PRD (see [prd.txt]) and aligned with our modern SaaS stack (see [stack.md]), this document defines the architecture, components, data models, APIs, infrastructure, and non-functional requirements for the MCP-Server Marketplace.  
+Based on PRD (see [prd.txt]) and aligned with our modern SaaS stack (see [stack.md]), this document defines the architecture, components, data models, APIs, infrastructure, and non-functional requirements for the MCP-Server Marketplace
 
 ---
 
