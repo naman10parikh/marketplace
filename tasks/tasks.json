@@ -4,7 +4,7 @@
       "id": 1,
       "title": "Set up project infrastructure and base architecture",
       "description": "Initialize the project structure, configure development environment, and set up the foundational architecture for the MCP Server Marketplace.",
-      "status": "pending",
+      "status": "done",
       "dependencies": [],
       "priority": "high",
       "details": "Create a Node.js/Express project with TypeScript. Set up the directory structure following best practices (routes, controllers, services, models). Configure ESLint, Prettier, and testing framework (Jest). Initialize Git repository with CI/CD pipeline configuration. Set up Docker for local development. Create configuration files for different environments (dev, test, prod). Implement basic error handling middleware and logging.",
@@ -42,7 +42,7 @@
           "id": 4,
           "title": "Implement environment configuration system",
           "description": "Create configuration files for different environments and implement a configuration management system",
-          "status": "pending",
+          "status": "done",
           "dependencies": [
             2
           ],
@@ -52,7 +52,7 @@
           "id": 5,
           "title": "Set up Docker for local development",
           "description": "Create Docker and Docker Compose configuration for local development environment",
-          "status": "pending",
+          "status": "done",
           "dependencies": [
             4
           ],
@@ -62,7 +62,7 @@
           "id": 6,
           "title": "Implement error handling and logging middleware",
           "description": "Create middleware for consistent error handling and logging throughout the application",
-          "status": "pending",
+          "status": "done",
           "dependencies": [
             1,
             4
@@ -87,7 +87,7 @@
           "id": 1,
           "title": "Create User Model and Database Schema",
           "description": "Define the user data model with required fields and create the database schema",
-          "status": "pending",
+          "status": "done",
           "dependencies": [],
           "details": "Create a User model with fields: id (primary key), email (unique), passwordHash, role (enum: user, admin), emailVerified (boolean), verificationToken (nullable), resetPasswordToken (nullable), resetPasswordExpiry (nullable), createdAt, and updatedAt. Set up database migrations. Implement password hashing using bcrypt with appropriate salt rounds. Add validation for email format and password strength."
         },
@@ -95,7 +95,7 @@
           "id": 2,
           "title": "Implement Signup Endpoint with Email Verification",
           "description": "Create the user registration endpoint with email verification functionality",
-          "status": "pending",
+          "status": "done",
           "dependencies": [
             1
           ],

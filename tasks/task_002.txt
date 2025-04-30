@@ -11,13 +11,13 @@ Create user model with email, password hash, and role fields. Implement /signup 
 Unit tests for user model and auth services. Integration tests for signup, login, and logout flows. Security tests for JWT implementation and cookie settings. Test role-based access control.
 
 # Subtasks:
-## 1. Create User Model and Database Schema [pending]
+## 1. Create User Model and Database Schema [done]
 ### Dependencies: None
 ### Description: Define the user data model with required fields and create the database schema
 ### Details:
 Create a User model with fields: id (primary key), email (unique), passwordHash, role (enum: user, admin), emailVerified (boolean), verificationToken (nullable), resetPasswordToken (nullable), resetPasswordExpiry (nullable), createdAt, and updatedAt. Set up database migrations. Implement password hashing using bcrypt with appropriate salt rounds. Add validation for email format and password strength.
 
-## 2. Implement Signup Endpoint with Email Verification [pending]
+## 2. Implement Signup Endpoint with Email Verification [done]
 ### Dependencies: 2.1
 ### Description: Create the user registration endpoint with email verification functionality
 ### Details:
