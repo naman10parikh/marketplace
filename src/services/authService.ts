@@ -1,9 +1,21 @@
 import bcrypt from 'bcrypt';
-import { User } from '../generated/prisma/index';
+import { PrismaClient } from '@prisma/client';
 import { generateVerificationToken } from '../utils/token';
 import { sendVerificationEmail } from './emailService';
 import { ApiError } from '../middleware/errorHandler';
 import { prisma } from '../utils/prisma';
+
+// Define User type from the Prisma schema
+type User = {
+  id: string;
+  email: string;
+  passwordHash: string;
+  emailVerified: boolean;
+  verificationToken: string | null;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 /**
  * Creates a new user in the database
@@ -45,7 +57,7 @@ export async function createUser(email: string, password: string): Promise<Omit<
     // Return user without passwordHash
     const { passwordHash: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
-  } catch (error) {
+  } catch (error: any) {
     // If this is a known error, rethrow it
     if (error instanceof ApiError) {
       throw error;
@@ -82,7 +94,7 @@ export async function verifyUserEmail(token: string): Promise<Omit<User, 'passwo
     }
 
     if (user.emailVerified) {
-      throw new ApiError('Email is already verified', 410);
+      throw new ApiError('Email is already verified', 404);
     }
 
     // Update user to mark email as verified and clear token
@@ -97,7 +109,7 @@ export async function verifyUserEmail(token: string): Promise<Omit<User, 'passwo
     // Return user without passwordHash
     const { passwordHash: _, ...userWithoutPassword } = updatedUser;
     return userWithoutPassword;
-  } catch (error) {
+  } catch (error: any) {
     // If this is a known error, rethrow it
     if (error instanceof ApiError) {
       throw error;

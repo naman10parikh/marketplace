@@ -1,48 +1,34 @@
-import { randomBytes } from 'crypto';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+
+// Secret key for JWT signing
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
 
 /**
- * Generates a random verification token
- * @returns A random token string
+ * Generate a random verification token
+ * @returns Random token string
  */
 export function generateVerificationToken(): string {
-  // Generate a random 32 byte hex string
-  return randomBytes(32).toString('hex');
+  return crypto.randomBytes(32).toString('hex');
 }
 
 /**
- * Generates a JWT token
- * @param payload The data to embed in the token
- * @param expiresIn Token expiration time
- * @returns JWT token string
+ * Generate a JWT token
+ * @param userId User ID to include in token
+ * @returns Signed JWT token
  */
-export function generateJwtToken(
-  payload: Record<string, any>,
-  expiresIn = process.env.JWT_EXPIRATION || '1h'
-): string {
-  const secret = process.env.JWT_SECRET;
-  
-  if (!secret) {
-    throw new Error('JWT_SECRET is not defined in environment variables');
-  }
-  
-  return jwt.sign(payload, secret, { expiresIn });
+export function generateJwtToken(userId: string): string {
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1d' });
 }
 
 /**
- * Verifies a JWT token
- * @param token The token to verify
- * @returns The decoded payload or null if invalid
+ * Verify a JWT token
+ * @param token Token to verify
+ * @returns Decoded payload or null if invalid
  */
 export function verifyJwtToken(token: string): any {
-  const secret = process.env.JWT_SECRET;
-  
-  if (!secret) {
-    throw new Error('JWT_SECRET is not defined in environment variables');
-  }
-  
   try {
-    return jwt.verify(token, secret);
+    return jwt.verify(token, JWT_SECRET);
   } catch (error) {
     return null;
   }

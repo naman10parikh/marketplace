@@ -1,12 +1,11 @@
 import request from 'supertest';
-import { User } from '../../generated/prisma/index';
 import app from '../../app';
 import { generateVerificationToken } from '../../utils/token';
 import { prisma } from '../../utils/prisma';
 import bcrypt from 'bcrypt';
 
 describe('GET /auth/verify', () => {
-  let testUser: User;
+  let testUser: any; // Using any for now to fix type errors
   let verificationToken: string;
 
   beforeAll(async () => {
